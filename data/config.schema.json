@@ -19,8 +19,7 @@
         "fr-FR": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
         "de-DE": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
         "cs-CZ": { "$ref": "http://jsonschema.net#/definitions/localeRef" }
-      },
-      "required": [ "en-US", "fr-FR", "de-DE", "cs-CZ" ]
+      }
     }
   },
   "required": [
