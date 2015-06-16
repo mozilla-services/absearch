@@ -1,0 +1,13 @@
+*.pyc
+*.egg-info
+*.stamp
+*.db
+*.un~
+.venv/
+.coverage
+.tox/
+lib
+include
+bin
+.Python
+*.swp

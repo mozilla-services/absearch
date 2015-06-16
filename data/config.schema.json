@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net",
+  "type": "object",
+  "properties": {
+    "v": {
+      "id": "http://json-schema.net/v",
+      "type": "integer"
+    },
+    "excludedDistributionIDPrefixes": {
+      "id": "http://json-schema.net/excludedDistributionIDPrefixes",
+      "type": "array"
+    },
+    "locales": {
+      "id": "http://json-schema.net/locales",
+      "type": "object",
+      "properties": {
+        "en-US": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
+        "fr-FR": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
+        "de-DE": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
+        "cs-CZ": { "$ref": "http://jsonschema.net#/definitions/localeRef" }
+      },
+      "required": [ "en-US", "fr-FR", "de-DE", "cs-CZ" ]
+    }
+  },
+  "required": [
+    "v",
+    "excludedDistributionIDPrefixes",
+    "locales"
+  ],
+  "definitions": {
+    "searchEngineEnumRef": {
+      "enum": ["Yahoo", "Yahoo 搜尋", "Google", "Bing", "DDG"]
+    },
+    "defaultSettingsRef": {
+      "type": "object",
+      "properties": {
+        "settings": {
+          "type": "object",
+          "properties": {
+            "searchDefault": {
+              "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+            }
+          }
+        }
+      }
+    },
+    "testRef": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": ["sampleRate"],
+          "properties": {
+            "settings": {
+              "type": "object",
+              "properties": {
+                "searchDefault": {
+                  "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+                }
+              }
+            },
+            "startTime": { "type": "integer" },
+            "sampleRate": { "type": "integer", "minimum": 1 },
+            "maxSize": { "type": "integer" },
+            "interval": { "type": "integer", "minimum": 3600 }
+          }
+        }
+      }
+    },
+    "localeRef": {
+      "type": "object",
+      "required": [ "default" ],
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "default": { "$ref": "http://jsonschema.net#/definitions/defaultSettingsRef" },
+            "tests": { "$ref": "http://jsonschema.net#/definitions/testRef" }
+          }
+        }
+      },
+      "properties": {
+        "default": { "$ref": "http://jsonschema.net#/definitions/defaultSettingsRef" }
+      }
+    }
+  }
+}

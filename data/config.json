@@ -1,0 +1,118 @@
+{
+  "v": 1,
+  "excludedDistributionIDPrefixes": [
+    "a",
+    "b",
+    "c"
+  ],
+  "locales": {
+    "en-US": {
+      "US": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Yahoo"
+          },
+          "interval": 31536000
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+    "fr-FR": {
+      "FR": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google"
+          },
+          "interval": 31536000
+        },
+        "tests": {
+          "foo": {
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "sampleRate": 100,
+            "maxSize": 3
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+    "de-DE": {
+      "DE": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google"
+          },
+          "interval": 31536000
+        },
+        "tests": {
+          "one": {
+            "settings": {
+              "searchDefault": "Yahoo"
+            },
+            "sampleRate": 1
+          },
+          "two": {
+            "settings": {
+              "searchDefault": "DDG"
+            },
+            "sampleRate": 1
+          },
+          "three": {
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "sampleRate": 1
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
+    "cs-CZ": {
+      "CZ": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google"
+          }
+        },
+        "tests": {
+          "foo23542": {
+            "startTime": 1434362310,
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "sampleRate": 1,
+            "maxSize": 10000,
+            "interval": 2592000
+          },
+          "bar34234": {
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "sampleRate": 1,
+            "maxSize": 10000,
+            "interval": 2592000
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    }
+  }
+}

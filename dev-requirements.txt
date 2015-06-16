@@ -1,0 +1,6 @@
+tox
+WebTest
+nose
+nose-cov
+coverage
+moto
