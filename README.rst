@@ -14,7 +14,7 @@ The AB Search service provides 5 commands:
 Overview
 ========
 
-.. image:: https://github.com/mozilla-services/absearch/blob/master/docs/absearch.jpg?raw=true
+.. image:: https://github.com/mozilla-services/searchab/blob/master/docs/absearch.jpg?raw=true
 
 
 * config.json contains the search settings per locale and territory, and also cohorts for a/b testing

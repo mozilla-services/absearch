@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from absearch import __version__
 
 install_requires = ['gevent', 'boto', 'bottle', 'jsonschema', 'redis',
-                    'konfig', 'statsd']
+                    'konfig', 'statsd', 'raven']
 
 classifiers = ["Programming Language :: Python",
                "License :: OSI Approved :: Apache Software License",
