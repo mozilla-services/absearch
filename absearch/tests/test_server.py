@@ -78,7 +78,7 @@ def test_set_cohort():
     app = get_app()
 
     # get a cohort
-    path = '/firefox/39/beta/en-US/US/default/default'
+    path = '/1/firefox/39/beta/en-US/US/default/default'
     res = app.get(path)
 
     assert res.json['cohort'] == 'default'
@@ -90,14 +90,14 @@ def test_set_cohort2():
     app = get_app()
 
     # get a cohort
-    path = '/firefox/39/beta/cs-CZ/cz/default/default'
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default'
     res = app.get(path)
 
     assert res.json['cohort'] in ('default', 'foo23542', 'bar34234')
     settings = res.json['settings']
 
     # now that we have a cohort let's check back the settings
-    path = '/firefox/39/beta/cs-CZ/cz/default/default/' + res.json['cohort']
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + res.json['cohort']
     res = app.get(path)
     assert res.json['settings'] == settings
 
@@ -108,7 +108,7 @@ def test_max_cohort():
     app = get_app()
 
     # get the cohort 3 times
-    path = '/firefox/39/beta/fr-FR/fr/default/default'
+    path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     for i in range(3):
         res = app.get(path)
         assert res.json['cohort'] == 'foo'
@@ -126,7 +126,7 @@ def test_sampleRate():
     counts = defaultdict(int)
 
     # get the cohort 1000 times
-    path = '/firefox/39/beta/de-DE/de/default/default'
+    path = '/1/firefox/39/beta/de-DE/de/default/default'
     for i in range(1000):
         res = app.get(path)
         counts[res.json['cohort']] += 1

@@ -95,7 +95,7 @@ def hb():
 def info():
     return {'version': __version__}
 
-PATH = '/<prod>/<ver>/<channel>/<locale>/<territory>/<dist>/<distver>'
+PATH = '/1/<prod>/<ver>/<channel>/<locale>/<territory>/<dist>/<distver>'
 
 
 @app.error(500)
