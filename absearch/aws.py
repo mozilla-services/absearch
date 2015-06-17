@@ -14,18 +14,21 @@ def _get_connector(config):
     global _CONNECTOR
 
     if _CONNECTOR is None:
-        format = boto.s3.connection.OrdinaryCallingFormat()
+        kw = {}
+        if config['aws']['use_path_style']:
+            kw['calling_format'] = boto.s3.connection.OrdinaryCallingFormat()
+
         is_secure = config['aws']['is_secure']
         if 'host' in config['aws']:
             conn = boto.connect_s3(is_secure=is_secure,
                                    port=config['aws']['port'],
                                    host=config['aws']['host'],
-                                   calling_format=format)
+                                   **kw)
 
         else:
             conn = boto.s3.connect_to_region(config['aws']['region'],
                                              is_secure=is_secure,
-                                             calling_format=format)
+                                             **kw)
         _CONNECTOR = conn
     return _CONNECTOR
 
