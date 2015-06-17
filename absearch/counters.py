@@ -56,7 +56,7 @@ class RedisCohortCounters(object):
 
         with self._redis.pipeline() as pipe:
             if self._statsd:
-                with self._statsd.timer('redis.get'):
+                with self._statsd.timer('redis.incr'):
                     _incr()
             else:
                 _incr()
