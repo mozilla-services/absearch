@@ -49,7 +49,7 @@ class RedisCohortCounters(object):
     def incr(self, locale, territory, cohort):
         key = self._key(locale, territory, cohort)
 
-        def _incr():
+        def _incr(pipe):
             pipe.sadd('absearch:keys', key)
             pipe.incr(key)
             pipe.execute()
@@ -57,9 +57,9 @@ class RedisCohortCounters(object):
         with self._redis.pipeline() as pipe:
             if self._statsd:
                 with self._statsd.timer('redis.incr'):
-                    _incr()
+                    _incr(pipe)
             else:
-                _incr()
+                _incr(pipe)
 
     def get(self, locale, territory, cohort):
         def _get():
