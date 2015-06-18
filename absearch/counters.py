@@ -21,6 +21,7 @@ class MemoryCohortCounters(object):
 
 
 class RedisCohortCounters(object):
+
     def __init__(self, host='localhost', port=6739, db=0, **kw):
         self._redis = redis.StrictRedis(host=host, port=port, db=db)
         if 'statsd' in kw:

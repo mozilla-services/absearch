@@ -5,6 +5,7 @@ import boto
 import boto.s3.connection
 from boto.s3.key import Key
 
+
 _CONNECTOR = None
 
 

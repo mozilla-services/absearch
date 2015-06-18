@@ -54,6 +54,7 @@ def initialize_app(config):
     else:
         app._sentry = None
 
+    # backend configuration
     configfile = app._config['absearch']['config']
     schemafile = app._config['absearch']['schema']
 
@@ -74,13 +75,14 @@ def initialize_app(config):
             with open(os.path.join(datadir, schemafile)) as f:
                 return json.loads(f.read())
 
+    # counter configuration
     counter = app._config['absearch']['counter']
     if counter == 'redis':
         counter_options = dict(app._config['redis'])
     else:
         counter_options = {}
-
     counter_options['statsd'] = app._statsd
+
     max_age = app._config['absearch']['max_age']
     app.settings = SearchSettings(config_reader, schema_reader, counter,
                                   counter_options, max_age)
