@@ -41,3 +41,28 @@ file and the data file as params::
     Loading 'redis-dump' into Redis
     Done
 
+
+Metrics
+=======
+
+
+The following metrics are produced by the app in statsd:
+
++------------------------------+---------+------------------------------------------+
+|   Name                       | Type    | Description                              |
++==============================+=========+==========================================+
+| absearch.redis.incr          | timer   | on every redis increment                 |
++------------------------------+---------+------------------------------------------+
+| absearch.redis.get           | timer   | on every redis lookup                    |
++------------------------------+---------+------------------------------------------+
+| absearch.s3.set_file         | timer   | file uploaded in S3                      |
++------------------------------+---------+------------------------------------------+
+| absearch.s3.get_file         | timer   | file downloaded from S3                  |
++------------------------------+---------+------------------------------------------+
+| absearch.add_user_to_cohort  | timer   | on every GET w/ a new cohort set         |
++------------------------------+---------+------------------------------------------+
+| absearch.cohorts.*           | counter | on every cohort set                      |
++------------------------------+---------+------------------------------------------+
+| absearch.get_cohort_settings | timer   | on every GET to get back cohort settings |
++------------------------------+---------+------------------------------------------+
+
