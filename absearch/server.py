@@ -111,8 +111,8 @@ def add_user_to_cohort(prod, ver, channel, locale, territory, dist, distver):
     with app._statsd.timer('add_user_to_cohort'):
         res = app.settings.get(prod, ver, channel, locale, territory, dist,
                                distver)
-        app._statsd.incr('.'.join(['cohorts', locale, territory,
-                                   res['cohort']]))
+        cohort = '.'.join(['cohorts', locale, territory, res['cohort']])
+        app._statsd.incr(cohort)
         return res
 
 
