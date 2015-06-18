@@ -11,10 +11,12 @@ class SearchSettings(object):
     def __init__(self, config_reader, schema_reader=None, counter='memory',
                  counter_options=None, max_age=None):
         self.max_age = max_age
+
         if counter == 'memory':
-            self._counters = MemoryCohortCounters()
+            counters_backend = MemoryCohortCounters
         else:
-            self._counters = RedisCohortCounters(**counter_options)
+            counters_backend = RedisCohortCounters
+        self._counters = counters_backend(**counter_options)
 
         self.config_reader = config_reader
         self.schema_reader = schema_reader

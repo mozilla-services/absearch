@@ -5,6 +5,7 @@ import boto
 import boto.s3.connection
 from boto.s3.key import Key
 
+
 _CONNECTOR = None
 
 
@@ -38,7 +39,7 @@ def set_s3_file(filename, config, statsd=None):
     """
     conn = _get_connector(config)
 
-    def set():
+    def _set():
         bucket = conn.get_bucket(config['aws']['bucketname'])
         key = Key(bucket)
         key.key = os.path.split(filename)[-1]
@@ -46,8 +47,8 @@ def set_s3_file(filename, config, statsd=None):
 
     if statsd:
         with statsd.timer('set_s3_file'):
-            return set()
-    return set()
+            return _set()
+    return _set()
 
 
 def get_s3_file(filename, config, statsd=None):
@@ -55,7 +56,7 @@ def get_s3_file(filename, config, statsd=None):
     """
     conn = _get_connector(config)
 
-    def get():
+    def _get():
         bucket = conn.get_bucket(config['aws']['bucketname'])
         key = Key(bucket)
         key.key = os.path.split(filename)[-1]
@@ -63,5 +64,5 @@ def get_s3_file(filename, config, statsd=None):
 
     if statsd:
         with statsd.timer('get_s3_file'):
-            return get()
-    return get()
+            return _get()
+    return _get()
