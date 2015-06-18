@@ -7,7 +7,7 @@ import redis
 
 class MemoryCohortCounters(object):
 
-    def __init__(self):
+    def __init__(self, **kw):
         self._counters = defaultdict(int)
 
     def _key(self, *args):
