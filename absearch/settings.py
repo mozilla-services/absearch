@@ -131,6 +131,7 @@ class SearchSettings(object):
         default['cohort'] = 'default'
 
         if tests == {}:
+            self._counters.incr(locale, territory, 'default')
             return default
 
         # XXX pick a random one and check out the counters.
@@ -140,6 +141,7 @@ class SearchSettings(object):
         while True:
             cohort = random.choice(self._random[locale, territory])
             if cohort == 'default':
+                self._counters.incr(locale, territory, cohort)
                 return default
 
             info = tests[cohort]
