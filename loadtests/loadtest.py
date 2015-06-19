@@ -1,6 +1,7 @@
 from gevent import monkey
 monkey.patch_all()
 
+import random
 from loads.case import TestCase
 import os
 
@@ -10,5 +11,15 @@ class TestSearch(TestCase):
         super(TestSearch, self).__init__(*args, **kwargs)
 
     def test_api(self):
-        res = self.session.get(self.server_url)
+        choices = (('en-US', 'US'),
+                   ('fr-FR', 'FR'),
+                   ('cs-CZ', 'CZ'))
+
+        # getting a cohort
+        locale, territory = random.choice(choices)
+        res = self.session.get(self.server_url +
+                               '/firefox/39/beta/%s/%s/release/default/default'
+                               % (locale, territory))
+
         self.assertEqual(res.status_code, 200)
+        self.assertTrue('settings' in res.json())
