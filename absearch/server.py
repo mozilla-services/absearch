@@ -90,7 +90,15 @@ def initialize_app(config):
 
 @app.route('/__heartbeat__')
 def hb():
-    pass
+    # doing a realistic code, but triggering a S3 call
+    res = app.settings.get('firefox', '39', 'default', 'en-US', 'US',
+                           'default', 'default')
+
+    incremented_cohort = res.get('cohort', 'default')
+
+    # let's decrement so we don't interfer with real counters
+    app.settings._counters.decr('en-US', 'US', incremented_cohort)
+    return {}
 
 
 @app.route('/__info__')

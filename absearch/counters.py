@@ -19,6 +19,9 @@ class MemoryCohortCounters(object):
     def get(self, locale, territory, cohort):
         return self._counters[self._key(locale, territory, cohort)]
 
+    def decr(self, locale, territory, cohort):
+        self._counters[self._key(locale, territory, cohort)] -= 1
+
 
 class RedisCohortCounters(object):
 
@@ -46,6 +49,10 @@ class RedisCohortCounters(object):
                 pipe.sadd('absearch:keys', key)
                 pipe.set(key, counter)
                 pipe.execute()
+
+    def decr(self, locale, territory, cohort):
+        key = self._key(locale, territory, cohort)
+        self._redis.decr(key)
 
     def incr(self, locale, territory, cohort):
         key = self._key(locale, territory, cohort)

@@ -82,3 +82,9 @@ def test_sampleRate():
     assert 0 < counts['two'] <= 20, counts
     assert 0 < counts['three'] <= 20, counts
     assert 955 <= counts['default'] <= 985, counts
+
+
+def test_hb():
+    app = get_app()
+    res = app.get('/__heartbeat__')
+    assert res.json == {}
