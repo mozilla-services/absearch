@@ -90,7 +90,10 @@ def initialize_app(config):
 
 @app.route('/__heartbeat__')
 def hb():
-    # doing a realistic code, but triggering a S3 call
+    # doing a realistic code, but triggering a S3 call as well
+    configfile = app._config['absearch']['config']
+    get_s3_file(configfile, app._config, app._statsd, use_cache=False)
+
     res = app.settings.get('firefox', '39', 'default', 'en-US', 'US',
                            'default', 'default')
 

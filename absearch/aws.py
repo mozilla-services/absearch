@@ -9,12 +9,12 @@ from boto.s3.key import Key
 _CONNECTOR = None
 
 
-def _get_connector(config):
+def _get_connector(config, use_cache=False):
     """Set a global connector.
     """
     global _CONNECTOR
 
-    if _CONNECTOR is None:
+    if _CONNECTOR is None or not use_cache:
         kw = {}
         if config['aws']['use_path_style']:
             kw['calling_format'] = boto.s3.connection.OrdinaryCallingFormat()
@@ -30,7 +30,11 @@ def _get_connector(config):
             conn = boto.s3.connect_to_region(config['aws']['region'],
                                              is_secure=is_secure,
                                              **kw)
-        _CONNECTOR = conn
+        if use_cache:
+            _CONNECTOR = conn
+        else:
+            return conn
+
     return _CONNECTOR
 
 
@@ -51,10 +55,10 @@ def set_s3_file(filename, config, statsd=None):
     return _set()
 
 
-def get_s3_file(filename, config, statsd=None):
+def get_s3_file(filename, config, statsd=None, use_cache=True):
     """Returns a S3 file from a bucket. With TTL-ed cache.
     """
-    conn = _get_connector(config)
+    conn = _get_connector(config, use_cache=use_cache)
 
     def _get():
         bucket = conn.get_bucket(config['aws']['bucketname'])
