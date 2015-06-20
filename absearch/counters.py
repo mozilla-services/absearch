@@ -84,16 +84,16 @@ class RedisCohortCounters(object):
         return int(res)
 
 
-def dump():
-    config = Config(sys.argv[1])
+def dump(args=sys.argv):
+    config = Config(args[1])
     counters = RedisCohortCounters(**dict(config['redis']))
     for line in counters.dump():
         print(line)
 
 
-def load():
-    config = Config(sys.argv[1])
-    data = sys.argv[2]
+def load(args=sys.argv):
+    config = Config(args[1])
+    data = args[2]
     counters = RedisCohortCounters(**dict(config['redis']))
 
     print('Loading %r into Redis' % data)
