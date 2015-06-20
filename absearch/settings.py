@@ -16,6 +16,10 @@ class SearchSettings(object):
             counters_backend = MemoryCohortCounters
         else:
             counters_backend = RedisCohortCounters
+
+        if counter_options is None:
+            counter_options = {}
+
         self._counters = counters_backend(**counter_options)
 
         self.config_reader = config_reader

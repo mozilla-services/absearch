@@ -22,6 +22,9 @@ class FakeStatsd(object):
 statsd.StatsClient = FakeStatsd
 
 from absearch.tests.support import runServers, stopServers, get_app
+from absearch import server
+
+server.StatsClient = FakeStatsd
 
 
 def setUp():
