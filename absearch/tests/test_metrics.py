@@ -42,7 +42,7 @@ def test_metrics():
     path = '/1/firefox/39/beta/en-US/US/default/default'
     res = app.get(path)
 
-    assert res.json['cohort'] == 'default'
+    assert 'cohort' not in res.json
     assert res.json['settings'] == {'searchDefault': 'Yahoo'}
     assert res.json['interval'] == 31536000
 

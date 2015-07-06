@@ -26,7 +26,7 @@ def test_set_cohort():
     path = '/1/firefox/39/beta/en-US/US/default/default'
     res = app.get(path)
 
-    assert res.json['cohort'] == 'default'
+    assert 'cohort' not in res.json
     assert res.json['settings'] == {'searchDefault': 'Yahoo'}
     assert res.json['interval'] == 31536000
 
@@ -38,20 +38,20 @@ def test_set_cohort2():
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default'
     res = app.get(path)
 
-    assert res.json['cohort'] in ('default', 'foo23542', 'bar34234')
+    cohort = res.json.get('cohort', 'default')
+    assert cohort in ('default', 'foo23542', 'bar34234')
     settings = res.json['settings']
 
     # now that we have a cohort let's check back the settings
-    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + res.json['cohort']
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + cohort
     res = app.get(path)
     assert res.json['settings'] == settings
-    if res.json['cohort'] == 'default':
-        wanted = ('Google1')
+    if 'cohort' not in res.json:
+        wanted = ('Google1',)
     else:
         wanted = ('Google2', 'Google3')
 
     assert res.json['settings']['searchDefault'] in wanted
-
     # also, an unexistant cohort should fall back to the default
     # settings for the territory
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default/meh'
@@ -72,7 +72,9 @@ def test_max_cohort():
 
     # should be exausthed now, let's check we get a default now
     res = app.get(path)
-    assert res.json['cohort'] == 'default'
+
+    # when default we don't have the cohort key in the response
+    assert 'cohort' not in res.json
 
 
 def test_sample_rate():
@@ -86,7 +88,10 @@ def test_sample_rate():
     path = '/1/firefox/39/beta/de-DE/de/default/default'
     for i in range(1000):
         res = app.get(path)
-        counts[res.json['cohort']] += 1
+        if 'cohort' not in res.json:
+            counts['default'] += 1
+        else:
+            counts[res.json['cohort']] += 1
 
     # we should have around 10 users per cohort
     # and around 970 for the default

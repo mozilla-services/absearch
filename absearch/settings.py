@@ -117,7 +117,8 @@ class SearchSettings(object):
         # we got something!
         if cohort is not None:
             res = self._get_cohort(locale, territory, cohort)
-            res['cohort'] = cohort
+            if cohort != 'default':
+                res['cohort'] = cohort
             return res
         else:
             # pick one
@@ -142,7 +143,6 @@ class SearchSettings(object):
 
     def _pick_cohort(self, locale, territory):
         default, tests = self._locales[locale, territory]
-        default['cohort'] = 'default'
 
         if tests == {}:
             self._counters.incr(locale, territory, 'default')
