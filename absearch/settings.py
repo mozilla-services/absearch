@@ -6,6 +6,9 @@ from jsonschema import validate
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
 
 
+DEFAULT_INTERVAL = 3600 * 24
+
+
 class SearchSettings(object):
 
     def __init__(self, config_reader, schema_reader=None, counter='memory',
@@ -37,6 +40,7 @@ class SearchSettings(object):
         if schema is not None:
             validate(config, schema)
 
+        self._default_interval = config.get('interval', DEFAULT_INTERVAL)
         self._excluded = set(config['excludedDistributionIDPrefixes'])
         self._locales = {}
         self._territories = defaultdict(list)
@@ -93,8 +97,10 @@ class SearchSettings(object):
         territory = territory.lower()
 
         # XXX prod, ver, channel & distver are not used at this point
+        # if dist is part of the excluded list, we're sending back
+        # the global interval value
         if dist in self._excluded:
-            raise KeyError(dist)
+            return {'interval': self._default_interval}
 
         # if the provided territory is not listed in that locale,
         # switch it to default

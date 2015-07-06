@@ -63,7 +63,7 @@ def test_max_cohort():
     assert res.json['cohort'] == 'default'
 
 
-def test_sampleRate():
+def test_sample_rate():
     # de-DE has 4 cohorts. each one should represent 1% of the users
     # we're going to make 100 calls and see if we're around those percentages
     app = get_app()
@@ -88,3 +88,13 @@ def test_hb():
     app = get_app()
     res = app.get('/__heartbeat__')
     assert res.json == {}
+
+
+def test_excluded():
+    app = get_app()
+
+    # make sure an excluded distribution falls back to
+    # sending back just a 200 + interval
+    path = '/1/firefox/39/beta/de-DE/de/a/default'
+    res = app.get(path).json
+    assert res.keys() == ['interval']
