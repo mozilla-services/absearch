@@ -63,7 +63,9 @@
           },
           "two": {
             "settings": {
-              "searchDefault": "DDG"
+              "searchDefault": "DDG",
+              "whatever": 1,
+              "we": "want here"
             },
             "sampleRate": 1
           },
