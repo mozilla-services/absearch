@@ -30,7 +30,7 @@
   "definitions": {
     "searchEngineEnumRef": {
       "enum": ["Yahoo", "Yahoo 搜尋", "Google", "Bing", "DDG",
-               "Google1", "Google2", "Google3"]
+               "Google1", "Google2", "Google3", "GoogleD"]
     },
     "defaultSettingsRef": {
       "type": "object",

@@ -59,6 +59,24 @@ def test_set_cohort2():
     assert res.json['settings']['searchDefault'] == 'Google1'
 
 
+def test_unexistant_territory():
+    app = get_app()
+    # check that an unexistant territory sends back the default
+    # from the locale
+    path = '/1/firefox/39/beta/fr-FR/uz/default/default'
+    res = app.get(path).json
+    assert res['settings']['searchDefault'] == 'GoogleD'
+
+
+def test_unexistant_locale():
+    app = get_app()
+    # check that an unexistant locale sends back and interval
+    path = '/1/firefox/39/beta/hh-FR/uz/default/default'
+
+    res = app.get(path).json
+    assert res.keys() == ['interval']
+
+
 def test_max_cohort():
     # check that we can have at the most 3 users in the 'foo' cohort
     # that cohort is at 100% sampleRate for the fr territory under fr-FR

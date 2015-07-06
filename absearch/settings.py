@@ -109,10 +109,9 @@ class SearchSettings(object):
         if territory not in self._territories[locale]:
             territory = 'default'
 
-        # if we don't have that
+        # if we don't have that, send back an interval
         if (locale, territory) not in self._locales:
-            raise KeyError("Could not find the %s/%s combo" % (locale,
-                           territory))
+            return {'interval': self._default_interval}
 
         # we got something!
         if cohort is not None:
