@@ -100,7 +100,3 @@ def load(args=sys.argv):
     with open(data) as f:
         counters.load(f)
     print('Done')
-
-
-if __name__ == '__main__':
-    dump()
