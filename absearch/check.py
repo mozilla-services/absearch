@@ -1,25 +1,28 @@
 import sys
 import os
 import json
+import argparse
 
 from absearch.settings import SearchSettings
-from konfig import Config
 
 
-datadir = os.path.join(os.path.dirname(__file__), '..', 'data')
-conf = os.path.join(os.path.dirname(__file__), '..', 'config', 'absearch.ini')
+DEFAULT_DATADIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
-def main():
+def main(args=sys.argv):
+    parser = argparse.ArgumentParser(description='Simple HTTP Load runner.')
+    parser.add_argument('-d', '--data-dir', help='Data directory',
+                        type=str, default=DEFAULT_DATADIR)
+    parser.add_argument('-c', '--config-file', help='Config File',
+                        type=str, default='config.json')
+    parser.add_argument('-s', '--schema-file', help='Schema File',
+                        type=str, default='config.schema.json')
+
+    args = parser.parse_args(args=args)
+
     print('Validating file...')
-
-    config = Config(conf)
-
-    config_file = config['absearch']['config']
-    schema_file = config['absearch']['schema']
-
-    configpath = os.path.join(datadir, config_file)
-    schemapath = os.path.join(datadir, schema_file)
+    configpath = os.path.join(args.data_dir, args.config_file)
+    schemapath = os.path.join(args.data_dir, args.schema_file)
 
     def read_config():
         with open(configpath) as f:
