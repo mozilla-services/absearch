@@ -40,7 +40,8 @@ class SearchSettings(object):
         if schema is not None:
             validate(config, schema)
 
-        self._default_interval = config.get('interval', DEFAULT_INTERVAL)
+        self._default_interval = config.get('defaultInterval',
+                                            DEFAULT_INTERVAL)
         self._excluded = set(config['excludedDistributionIDPrefixes'])
         self._locales = {}
         self._territories = defaultdict(list)

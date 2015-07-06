@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "interval": 31536000,
+  "defaultInterval": 31536000,
   "excludedDistributionIDPrefixes": [
     "a",
     "b",

@@ -38,7 +38,7 @@ def _test_max_age(testdir):
 
     with open(confpath) as f:
         data = json.loads(f.read())
-        data['interval'] = -1
+        data['defaultInterval'] = -1
         with open(confpath, 'w') as fw:
             fw.write(json.dumps(data))
 
