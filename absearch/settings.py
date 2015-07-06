@@ -99,8 +99,9 @@ class SearchSettings(object):
         # XXX prod, ver, channel & distver are not used at this point
         # if dist is part of the excluded list, we're sending back
         # the global interval value
-        if dist in self._excluded:
-            return {'interval': self._default_interval}
+        for excluded in self._excluded:
+            if dist.startswith(excluded):
+                return {'interval': self._default_interval}
 
         # if the provided territory is not listed in that locale,
         # switch it to default

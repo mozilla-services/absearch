@@ -107,6 +107,6 @@ def test_excluded():
 
     # make sure an excluded distribution falls back to
     # sending back just a 200 + interval
-    path = '/1/firefox/39/beta/de-DE/de/a/default'
+    path = '/1/firefox/39/beta/de-DE/de/ayeah/default'
     res = app.get(path).json
     assert res.keys() == ['interval']
