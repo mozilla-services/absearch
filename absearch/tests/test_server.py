@@ -45,6 +45,18 @@ def test_set_cohort2():
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + res.json['cohort']
     res = app.get(path)
     assert res.json['settings'] == settings
+    if res.json['cohort'] == 'default':
+        wanted = ('Google1')
+    else:
+        wanted = ('Google2', 'Google3')
+
+    assert res.json['settings']['searchDefault'] in wanted
+
+    # also, an unexistant cohort should fall back to the default
+    # settings for the territory
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/meh'
+    res = app.get(path)
+    assert res.json['settings']['searchDefault'] == 'Google1'
 
 
 def test_max_cohort():

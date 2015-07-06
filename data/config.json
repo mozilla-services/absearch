@@ -86,14 +86,14 @@
       "CZ": {
         "default": {
           "settings": {
-            "searchDefault":   "Google"
+            "searchDefault":   "Google1"
           }
         },
         "tests": {
           "foo23542": {
             "startTime": 1434362310,
             "settings": {
-              "searchDefault": "Google"
+              "searchDefault": "Google2"
             },
             "sampleRate": 1,
             "maxSize": 10000,
@@ -101,7 +101,7 @@
           },
           "bar34234": {
             "settings": {
-              "searchDefault": "Google"
+              "searchDefault": "Google3"
             },
             "sampleRate": 1,
             "maxSize": 10000,

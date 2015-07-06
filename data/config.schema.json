@@ -29,7 +29,8 @@
   ],
   "definitions": {
     "searchEngineEnumRef": {
-      "enum": ["Yahoo", "Yahoo 搜尋", "Google", "Bing", "DDG"]
+      "enum": ["Yahoo", "Yahoo 搜尋", "Google", "Bing", "DDG",
+               "Google1", "Google2", "Google3"]
     },
     "defaultSettingsRef": {
       "type": "object",
