@@ -1,8 +1,8 @@
 try:
     from gevent import monkey
     monkey.patch_all()
-except ImportError:
-    pass
+except ImportError:     # pragma: no cover
+    pass                # pragma: no cover
 
 __version__ = '0.1'
 
