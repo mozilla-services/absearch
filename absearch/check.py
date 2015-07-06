@@ -9,7 +9,7 @@ from absearch.settings import SearchSettings
 DEFAULT_DATADIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
-def main(args=sys.argv):
+def main(args=sys.argv[1:]):
     parser = argparse.ArgumentParser(description='Simple HTTP Load runner.')
     parser.add_argument('-d', '--data-dir', help='Data directory',
                         type=str, default=DEFAULT_DATADIR)
