@@ -37,11 +37,11 @@ def main(args=sys.argv[1:]):
     except ValueError as e:
         print('Not a valid JSON file')
         print(str(e))
-        return False
+        return 1
 
     print('OK')
-    return True
+    return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main() and 0 or 1)
+    sys.exit()

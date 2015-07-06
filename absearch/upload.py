@@ -9,7 +9,8 @@ conf = os.path.join(os.path.dirname(__file__), '..', 'config', 'absearch.ini')
 
 
 def main():
-    check()
+    if check() != 0:
+        raise ValueError("Invalid File")
     config = Config(conf)
     config_file = config['absearch']['config']
     schema_file = config['absearch']['schema']

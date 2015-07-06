@@ -13,8 +13,9 @@ def tearDown():
 def test_check():
 
     with capture() as out:
-        main([])
+        res = main([])
 
     stdout, stderr = out
     assert stderr == '', stderr
     assert 'OK' in stdout
+    assert res == 0
