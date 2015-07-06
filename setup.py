@@ -1,8 +1,14 @@
 from setuptools import setup, find_packages
 from absearch import __version__
 
-install_requires = ['gevent', 'boto', 'bottle', 'jsonschema', 'redis',
-                    'konfig', 'statsd', 'raven']
+install_requires = ['gevent==1.0.2',
+                    'boto==2.38.0',
+                    'bottle==0.12.8',
+                    'jsonschema==2.5.1',
+                    'redis==2.10.3',
+                    'konfig==0.9',
+                    'statsd==3.1',
+                    'raven==5.3.1']
 
 classifiers = ["Programming Language :: Python",
                "License :: OSI Approved :: Apache Software License",
