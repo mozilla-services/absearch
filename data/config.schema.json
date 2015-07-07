@@ -50,7 +50,7 @@
       "patternProperties": {
         "^.*$": {
           "type": "object",
-          "required": ["sampleRate"],
+          "required": ["filters"],
           "properties": {
             "settings": {
               "type": "object",
@@ -60,10 +60,14 @@
                 }
               }
             },
-            "startTime": { "type": "integer" },
-            "sampleRate": { "type": "integer", "minimum": 1 },
-            "maxSize": { "type": "integer" },
-            "interval": { "type": "integer", "minimum": 3600 }
+            "interval": { "type": "integer", "minimum": 3600 },
+            "filters": {
+              "type": "object",
+              "required" : ["sampleRate"],
+              "properties": {
+                "sampleRate": { "type": "integer", "minimum": 1 }
+              }
+            }
           }
         }
       }

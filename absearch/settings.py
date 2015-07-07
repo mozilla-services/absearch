@@ -72,7 +72,7 @@ class SearchSettings(object):
                 rates = []
                 count = 0
                 for test, data in tests.items():
-                    rate = data['sampleRate']
+                    rate = data['filters']['sampleRate']
                     count += rate
                     rates.extend([test] * rate)
 
@@ -170,7 +170,7 @@ class SearchSettings(object):
 
             info = tests[cohort]
             # did we reach the max ?
-            max = info.get('maxSize')
+            max = info['filters'].get('maxSize')
             if max:
                 current = self._counters.get(locale, territory, cohort)
                 if current >= max:

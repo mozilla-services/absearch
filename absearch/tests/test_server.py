@@ -120,7 +120,7 @@ def test_max_cohort():
     res = app.get(path)
 
     # when default we don't have the cohort key in the response
-    assert 'cohort' not in res.json
+    assert 'cohort' not in res.json, res.json
 
 
 def test_sample_rate():

@@ -35,8 +35,10 @@
             "settings": {
               "searchDefault": "Google"
             },
-            "sampleRate": 100,
-            "maxSize": 3
+            "filters": {
+              "sampleRate": 100,
+              "maxSize": 3
+            }
           }
         }
       },
@@ -59,7 +61,9 @@
             "settings": {
               "searchDefault": "Yahoo"
             },
-            "sampleRate": 1
+            "filters": {
+              "sampleRate": 1
+            }
           },
           "two": {
             "settings": {
@@ -67,13 +71,17 @@
               "whatever": 1,
               "we": "want here"
             },
-            "sampleRate": 1
+            "filters": {
+              "sampleRate": 1
+            }
           },
           "three": {
             "settings": {
               "searchDefault": "Google"
             },
-            "sampleRate": 1
+            "filters": {
+              "sampleRate": 1
+            }
           }
         }
       },
@@ -93,20 +101,24 @@
         },
         "tests": {
           "foo23542": {
-            "startTime": 1434362310,
             "settings": {
               "searchDefault": "Google2"
             },
-            "sampleRate": 1,
-            "maxSize": 10000,
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000,
+              "startTime": 1434362310
+            },
             "interval": 2592000
           },
           "bar34234": {
             "settings": {
               "searchDefault": "Google3"
             },
-            "sampleRate": 1,
-            "maxSize": 10000,
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000
+            },
             "interval": 2592000
           }
         }
