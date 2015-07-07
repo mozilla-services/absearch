@@ -1,6 +1,7 @@
 from collections import defaultdict
 from absearch import __version__
 from absearch.tests.support import runServers, stopServers, get_app
+from absearch.server import reload
 
 
 def setUp():
@@ -133,3 +134,18 @@ def test_excluded():
     path = '/1/firefox/39/beta/de-DE/de/ayeah/default'
     res = app.get(path).json
     assert res.keys() == ['interval']
+
+
+def test_reload():
+    # change something in the config
+    app = get_app()
+    config_file = app.app._config_file
+    config = app.app._config
+    config['statsd']['prefix'] = 'meh'
+    with open(config_file, 'w') as f:
+        config.write(f)
+
+    # make sure that reload grabs the config
+    reload()
+
+    assert app.app._config['statsd']['prefix'] == 'meh'
