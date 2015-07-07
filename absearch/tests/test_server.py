@@ -48,6 +48,17 @@ def test_default_interval():
     assert res.json['interval'] == 31536000
 
 
+def test_just_3_keys():
+    app = get_app()
+    path = '/1/Firefoox/39/releaese/de-DE/DE/default/default'
+    res = app.get(path)
+    keys = res.json.keys()
+    keys.sort()
+    wanted = ['cohort', 'interval', 'settings']
+    wanted2 = 'interval', 'settings'
+    assert keys == wanted or wanted2, keys
+
+
 def test_set_cohort2():
     app = get_app()
 
@@ -103,7 +114,7 @@ def test_max_cohort():
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     for i in range(3):
         res = app.get(path)
-        assert res.json['cohort'] == 'foo'
+        assert res.json.get('cohort') == 'foo', i
 
     # should be exausthed now, let's check we get a default now
     res = app.get(path)

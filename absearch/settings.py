@@ -125,6 +125,13 @@ class SearchSettings(object):
         if 'interval' not in res:
             res['interval'] = self._default_interval
 
+        allowed_keys = ('cohort', 'settings', 'interval')
+        res = dict(res)
+
+        for key in list(res.keys()):
+            if key not in allowed_keys:
+                del res[key]
+
         return res
 
     def _get_cohort(self, locale, territory, cohort):
