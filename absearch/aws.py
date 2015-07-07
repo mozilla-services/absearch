@@ -4,6 +4,7 @@ import os
 import boto
 import boto.s3.connection
 from boto.s3.key import Key
+from boto.s3 import connect_to_region as conn_region
 
 
 _CONNECTOR = None
@@ -27,9 +28,9 @@ def _get_connector(config, use_cache=False):
                                    **kw)
 
         else:
-            conn = boto.s3.connect_to_region(config['aws']['region'],
-                                             is_secure=is_secure,
-                                             **kw)
+            conn = conn_region(config['aws']['region'],     # pragma: no cover
+                               is_secure=is_secure, **kw)   # pragma: no cover
+
         if use_cache:
             _CONNECTOR = conn
         else:

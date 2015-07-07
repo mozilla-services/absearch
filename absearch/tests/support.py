@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import signal
 import time
 from cStringIO import StringIO
 from contextlib import contextmanager
@@ -18,13 +19,15 @@ def run_moto():
             "from moto import server; server.main()",
             's3bucket_path']
     return subprocess.Popen(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+                            stderr=subprocess.PIPE,
+                            preexec_fn=os.setsid)
 
 
 def run_redis():
     args = ['redis-server', '--port', '7777']
     return subprocess.Popen(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+                            stderr=subprocess.PIPE,
+                            preexec_fn=os.setsid)
 
 
 _P = []
@@ -56,7 +59,14 @@ def runServers():
 
 def stopServers():
     for p in _P:
-        p.kill()
+        try:
+            os.killpg(p.pid, signal.SIGTERM)
+            p.kill()
+        except OSError:
+            pass
+        p.wait()
+
+    _P[:] = []
 
 
 def get_app():
