@@ -50,12 +50,12 @@ def test_default_interval():
 
 def test_just_3_keys():
     app = get_app()
-    path = '/1/Firefoox/39/releaese/de-DE/DE/default/default'
+    path = '/1/Firefoox/39/release/de-DE/DE/default/default'
     res = app.get(path)
     keys = res.json.keys()
     keys.sort()
     wanted = ['cohort', 'interval', 'settings']
-    wanted2 = 'interval', 'settings'
+    wanted2 = ['interval', 'settings']
     assert keys == wanted or wanted2, keys
 
 
