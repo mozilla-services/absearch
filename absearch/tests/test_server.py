@@ -1,6 +1,6 @@
 from collections import defaultdict
 from absearch import __version__
-from absearch.tests.support import runServers, stopServers, get_app
+from absearch.tests.support import runServers, stopServers, get_app, capture
 from absearch.server import reload
 
 
@@ -142,10 +142,18 @@ def test_reload():
     config_file = app.app._config_file
     config = app.app._config
     config['statsd']['prefix'] = 'meh'
+    config['sentry']['enabled'] = '0'
+
     with open(config_file, 'w') as f:
         config.write(f)
 
     # make sure that reload grabs the config
-    reload()
+    with capture():
+        reload()
 
     assert app.app._config['statsd']['prefix'] == 'meh'
+
+    # doing a call with sentry disabled
+    path = '/1/firefox/39/beta/hh-FR/uz/default/default'
+    res = app.get(path).json
+    assert res.keys() == ['interval']
