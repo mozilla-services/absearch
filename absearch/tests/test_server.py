@@ -5,7 +5,7 @@ import gevent
 
 from absearch import __version__
 from absearch.tests.support import (runServers, stopServers, get_app, capture,
-                                    test_config)
+                                    test_config, flush_redis)
 from absearch.server import reload, main
 
 
@@ -106,6 +106,7 @@ def test_unexistant_locale():
 
 
 def test_max_cohort():
+    flush_redis()
     # check that we can have at the most 3 users in the 'foo' cohort
     # that cohort is at 100% sampleRate for the fr territory under fr-FR
     app = get_app()
@@ -123,9 +124,57 @@ def test_max_cohort():
     assert 'cohort' not in res.json, res.json
 
 
+def test_product_filter():
+    flush_redis()
+    # check that we are filtering by product
+    app = get_app()
+
+    # get the cohort for fr-FR+fr
+    path = '/1/firefox/39/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert res.json.get('cohort') == 'foo', res.json
+
+    # if the product it not firefox, we should bypass the foo cohort
+    path = '/1/thunderbird/39/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert 'cohort' not in res.json, res.json
+
+
+def test_channel_filter():
+    flush_redis()
+    # check that we are filtering by product
+    app = get_app()
+
+    # get the cohort for fr-FR+fr
+    path = '/1/firefox/39/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert res.json.get('cohort') == 'foo', res.json
+
+    # if the channel is not listed, we should bypass the foo cohort
+    path = '/1/firefox/39/alpha/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert 'cohort' not in res.json, res.json
+
+
+def test_version_filter():
+    flush_redis()
+    # check that we are filtering by product
+    app = get_app()
+
+    # get the cohort for fr-FR+fr
+    path = '/1/firefox/39/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert res.json.get('cohort') == 'foo', res.json
+
+    # if the version is < 39, we should bypass the foo cohort
+    path = '/1/firefox/38/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert 'cohort' not in res.json, res.json
+
+
 def test_sample_rate():
     # de-DE has 4 cohorts. each one should represent 1% of the users
-    # we're going to make 100 calls and see if we're around those percentages
+    # we're going to make 1000 calls and see if we're around those percentages
     app = get_app()
 
     counts = defaultdict(int)

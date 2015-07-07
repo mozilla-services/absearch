@@ -37,7 +37,10 @@
             },
             "filters": {
               "sampleRate": 100,
-              "maxSize": 3
+              "maxSize": 3,
+              "products": ["firefox"],
+              "channels": ["beta", "release"],
+              "minVersion": 39
             }
           }
         }

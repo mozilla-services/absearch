@@ -1,12 +1,26 @@
 import time
 from collections import defaultdict
 import random
+import operator
+import bisect
 
 from jsonschema import validate
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
 
 
 DEFAULT_INTERVAL = 3600 * 24
+
+
+def accumulate(iterable):
+    it = iter(iterable)
+    try:
+        total = next(it)
+    except StopIteration:
+        return
+    yield total
+    for element in it:
+        total = operator.add(total, element)
+        yield total
 
 
 class SearchSettings(object):
@@ -45,7 +59,6 @@ class SearchSettings(object):
         self._excluded = set(config['excludedDistributionIDPrefixes'])
         self._locales = {}
         self._territories = defaultdict(list)
-        self._random = {}
 
         for locale, locale_data in config['locales'].items():
             locale = locale.lower()
@@ -68,17 +81,6 @@ class SearchSettings(object):
                 self._locales[locale, territory] = default, tests
                 self._territories[locale].append(territory)
 
-                # preparing the random collection
-                rates = []
-                count = 0
-                for test, data in tests.items():
-                    rate = data['filters']['sampleRate']
-                    count += rate
-                    rates.extend([test] * rate)
-
-                rates.extend(['default'] * (100-count))
-                self._random[locale, territory] = rates
-
         self._last_loaded = time.time()
 
     def get(self, prod, ver, channel, locale, territory, dist, distver,
@@ -94,10 +96,17 @@ class SearchSettings(object):
                 time.time() - self._last_loaded > self.max_age):
             self.load()
 
+        # we should do this at the http level
         locale = locale.lower()
         territory = territory.lower()
+        prod = prod.lower()
+        ver = ver.lower()
+        channel = channel.lower()
+        dist = dist.lower()
+        distver = distver.lower()
+        if cohort:
+            cohort = cohort.lower()
 
-        # XXX prod, ver, channel & distver are not used at this point
         # if dist is part of the excluded list, we're sending back
         # the global interval value
         for excluded in self._excluded:
@@ -120,7 +129,7 @@ class SearchSettings(object):
                 res['cohort'] = cohort
         else:
             # pick one
-            res = self._pick_cohort(locale, territory)
+            res = self._pick_cohort(locale, territory, prod, ver, channel)
 
         if 'interval' not in res:
             res['interval'] = self._default_interval
@@ -144,60 +153,78 @@ class SearchSettings(object):
         # we send back the cohort settings if the cohort is active
         cohort_data = tests[cohort]
         if 'startTime' in cohort_data:
-            if cohort_data['startTime'] > time.time():
+            if cohort_data['startTime'] >= time.time():
                 # not active yet
                 # we send back the default settings
                 return default
 
         return cohort_data
 
-    def _pick_cohort(self, locale, territory):
+    def _is_filtered(self, prod, ver, channel, locale, territory, cohort,
+                     filters):
+        start_time = filters.get('startTime')
+        if start_time and start_time < time.time():
+            return True
+
+        # xxx lower it on first load
+        products = [p.lower() for p in filters.get('products', [])]
+        if len(products) > 0 and prod not in products:
+            return True
+
+        # xxx lower it on first load
+        channels = [c.lower() for c in filters.get('channels', [])]
+        if len(channels) > 0 and channel not in channels:
+            return True
+
+        ver = int(ver.split('.')[0])
+        min_version = int(filters.get('minVersion', '-1'))
+        if ver < min_version:
+            return True
+
+        max = filters.get('maxSize')
+        if max:
+            current = self._counters.get(locale, territory, cohort)
+            if current >= max:
+                return True
+
+        # all good
+        return False
+
+    def _pick_cohort(self, locale, territory, prod, ver, channel):
         default, tests = self._locales[locale, territory]
 
         if tests == {}:
             self._counters.incr(locale, territory, 'default')
             return default
 
-        # XXX pick a random one and check out the counters.
-        # next: should use the sampleRate
-        picked = None
+        # building a list of filtered cohorts with their weights
+        total_weight = 0
+        cohorts = []
 
-        while True:
-            cohort = random.choice(self._random[locale, territory])
-            if cohort == 'default':
-                self._counters.incr(locale, territory, cohort)
-                return default
+        for cohort, info in tests.items():
+            filters = info['filters']
+            if self._is_filtered(prod, ver, channel, locale, territory,
+                                 cohort, filters):
+                continue
 
-            info = tests[cohort]
-            # did we reach the max ?
-            max = info['filters'].get('maxSize')
-            if max:
-                current = self._counters.get(locale, territory, cohort)
-                if current >= max:
-                    # yes, we should remove that cohort from _random
-                    # and replace all occurrences with 'default'
-                    def _pick(value):
-                        if value == cohort:
-                            return 'default'
-                        return value
+            weight = filters['sampleRate']
+            cohorts.append((cohort, weight))
+            total_weight += weight
 
-                    randoms = [_pick(value) for value in
-                               self._random[locale, territory]]
-                    self._random[locale, territory] = randoms
-                    continue
-                else:
-                    self._counters.incr(locale, territory, cohort)
-                    picked = cohort
-                    break
-            else:
-                # no max we can pick it
-                self._counters.incr(locale, territory, cohort)
-                picked = cohort
-                break
+        # adding default
+        cohorts.append(('default', 100 - total_weight))
 
-        if picked is None:
+        # now let's pick one
+        choices, weights = zip(*cohorts)
+        cumdist = list(accumulate(weights))
+        x = random.random() * 100
+        picked = choices[bisect.bisect(cumdist, x)]
+        self._counters.incr(locale, territory, cohort)
+
+        # and send it back
+        if picked == 'default':
             return default
 
-        settings = tests[cohort]
-        settings['cohort'] = cohort
+        settings = tests[picked]
+        settings['cohort'] = picked
         return settings

@@ -57,6 +57,12 @@ def runServers():
     _redis.flushdb()
 
 
+def flush_redis():
+    config = Config(test_config)
+    _redis = redis.StrictRedis(**dict(config['redis']))
+    _redis.flushdb()
+
+
 def stopServers():
     for p in _P:
         try:
