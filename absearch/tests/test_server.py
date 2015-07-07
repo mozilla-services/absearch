@@ -37,6 +37,17 @@ def test_set_cohort():
     assert res.json['interval'] == 31536000
 
 
+def test_default_interval():
+    # en-US/FR does not exists. we fallback to the default in en-US
+    # and if it does not contain an interval we want to add the default
+    # interval
+    app = get_app()
+    path = '/1/Firefox/39/release/en-US/FR/default/default'
+    res = app.get(path)
+    assert 'cohort' not in res.json
+    assert res.json['interval'] == 31536000
+
+
 def test_set_cohort2():
     app = get_app()
 

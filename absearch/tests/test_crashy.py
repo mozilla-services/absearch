@@ -63,4 +63,4 @@ def test_redis_dies():
     time.sleep(.1)
 
     # our app should be ok.
-    res = app.get(path)
+    app.get(path)

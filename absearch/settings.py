@@ -118,10 +118,14 @@ class SearchSettings(object):
             res = self._get_cohort(locale, territory, cohort)
             if cohort != 'default':
                 res['cohort'] = cohort
-            return res
         else:
             # pick one
-            return self._pick_cohort(locale, territory)
+            res = self._pick_cohort(locale, territory)
+
+        if 'interval' not in res:
+            res['interval'] = self._default_interval
+
+        return res
 
     def _get_cohort(self, locale, territory, cohort):
         default, tests = self._locales[locale, territory]
