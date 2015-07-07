@@ -28,7 +28,7 @@ $(PYTHON):
 	$(VIRTUALENV) $(VENV)
 
 tests:	install-dev
-	$(VENV)/bin/tox
+	rm -f .coverage;$(VENV)/bin/tox
 
 clean:
 	find . -name '*.pyc' -delete

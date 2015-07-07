@@ -1,7 +1,12 @@
+import os
 from collections import defaultdict
+
+import gevent
+
 from absearch import __version__
-from absearch.tests.support import runServers, stopServers, get_app, capture
-from absearch.server import reload
+from absearch.tests.support import (runServers, stopServers, get_app, capture,
+                                    test_config)
+from absearch.server import reload, main
 
 
 def setUp():
@@ -137,23 +142,51 @@ def test_excluded():
 
 
 def test_reload():
-    # change something in the config
+    # change some things in the config
     app = get_app()
     config_file = app.app._config_file
     config = app.app._config
-    config['statsd']['prefix'] = 'meh'
-    config['sentry']['enabled'] = '0'
 
+    # save current config
+    with open(config_file + '.saved', 'w') as f:
+        config.write(f)
+
+    # change the configuration to alternatives
+    # so we actually test them
+    config['statsd']['prefix'] = 'meh'
+    config['sentry']['enabled'] = '1'
+    config['absearch']['backend'] = 'directory'
+    config['absearch']['counter'] = 'memory'
+    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    config.add_section('directory')
+    config['directory']['path'] = datadir
+
+    # save new config
     with open(config_file, 'w') as f:
         config.write(f)
 
-    # make sure that reload grabs the config
+    try:
+        # make sure that reload grabs the config
+        with capture():
+            reload()
+
+        assert app.app._config['statsd']['prefix'] == 'meh'
+
+        # doing a call with sentry disabled
+        path = '/1/firefox/39/beta/hh-FR/uz/default/default'
+        res = app.get(path).json
+        assert res.keys() == ['interval']
+    finally:
+        # restore old config
+        os.rename(config_file + '.saved', config_file)
+
+
+def test_main():
     with capture():
-        reload()
+        greenlet = gevent.spawn(main, [test_config])
+        gevent.sleep(0.1)
 
-    assert app.app._config['statsd']['prefix'] == 'meh'
-
-    # doing a call with sentry disabled
-    path = '/1/firefox/39/beta/hh-FR/uz/default/default'
-    res = app.get(path).json
-    assert res.keys() == ['interval']
+    assert greenlet.started
+    greenlet.kill()
+    gevent.wait([greenlet])
+    assert not greenlet.started

@@ -138,9 +138,12 @@ def get_cohort_settings(prod, ver, channel, locale, territory, dist, distver,
                                 distver, cohort)
 
 
-def main():
-    if len(sys.argv) > 1:
-        config = sys.argv[1]
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+
+    if len(args) > 0:
+        config = args[0]
     else:
         config = os.path.join(os.path.dirname(__file__), '..', 'config',
                               'absearch.ini')
@@ -150,7 +153,3 @@ def main():
 
     app.run(host=abconf['host'], port=abconf['port'],
             server=abconf['server'], debug=abconf['debug'])
-
-
-if __name__ == '__main__':
-    main()
