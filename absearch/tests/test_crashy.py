@@ -1,9 +1,10 @@
 import os
 import time
 import signal
-import redis
+
+from webtest import AppError
 from absearch.tests.support import (runServers, stopServers, get_app, _P,
-                                    run_redis)
+                                    run_redis, capture)
 
 
 def setUp():
@@ -31,12 +32,31 @@ def test_redis_dies():
     redis_process.wait()
 
     # what happens to our app ?
-    try:
-        res = app.get(path)
-    except redis.ConnectionError:
-        pass    # that's what we want
-    else:
-        raise Exception(res)
+    class MySentry(object):
+        exceptions = 0
+
+        def get_ident(self, something):
+            self.exceptions += 1
+            return 'id'
+
+        def captureException(self):
+            return 'yeah'
+
+    old_sentry = app.app._sentry
+    app.app._sentry = MySentry()
+    app.app.catchall = True
+
+    with capture():
+        try:
+            res = app.get(path)
+        except AppError as e:
+            # that's what we want
+            assert '500' in str(e)
+        else:
+            raise Exception(res)
+        finally:
+            app.app._sentry = old_sentry
+            app.app.catchall = False
 
     # and... redis is back!
     _P.append(run_redis())
