@@ -255,7 +255,9 @@ def test_sample_rate():
 def test_hb():
     app = get_app()
     res = app.get('/__heartbeat__')
-    assert res.json == {}
+
+    assert 'schema_md5' in res.json, res.json
+    assert 'config_md5' in res.json, res.json
 
 
 def test_excluded():

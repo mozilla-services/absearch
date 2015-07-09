@@ -18,8 +18,8 @@ class TestSearch(TestCase):
         # getting a cohort
         locale, territory = random.choice(choices)
         res = self.session.get(self.server_url +
-                               '/firefox/39/beta/%s/%s/release/default/default'
-                               % (locale, territory))
+                             '/1/firefox/39/beta/%s/%s/release/default/default'
+                              % (locale, territory))
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue('settings' in res.json())

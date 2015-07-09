@@ -1,3 +1,4 @@
+import hashlib
 import os
 import shutil
 import tempfile
@@ -25,11 +26,13 @@ def _test_max_age(testdir):
 
     def config_reader():
         with open(confpath) as f:
-            return json.loads(f.read())
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
     def schema_reader():
         with open(os.path.join(testdir, 'config.schema.json')) as f:
-            return json.loads(f.read())
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
     settings = SearchSettings(config_reader, schema_reader, max_age=0.1)
     assert settings._default_interval == 31536000

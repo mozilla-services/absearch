@@ -1,6 +1,7 @@
 import json
 import os
 from contextlib import contextmanager
+import hashlib
 
 from absearch.tests.support import runServers, stopServers, test_config
 from absearch.aws import get_s3_file, set_s3_file
@@ -28,10 +29,12 @@ def test_get_set_s3_file():
 
     with open(datafile) as f:
         old_data = f.read()
+        old_hash = hashlib.md5(old_data).hexdigest()
 
     # reading the S3 bucket (that was filled with datafile)
-    res = get_s3_file(datafile, config, statsd=stats)
+    res, hash = get_s3_file(datafile, config, statsd=stats)
     assert res['defaultInterval'] == 31536000
+    assert hash == old_hash
 
     # changing the file content
     res['defaultInterval'] = -1
@@ -43,8 +46,8 @@ def test_get_set_s3_file():
         set_s3_file(datafile, config, statsd=stats)
 
         # getting back the new content
-        res = get_s3_file(config['absearch']['config'], config,
-                          use_cache=False, statsd=stats)
+        res, hash = get_s3_file(config['absearch']['config'], config,
+                                use_cache=False, statsd=stats)
 
         # we should see the change
         assert res['defaultInterval'] == -1

@@ -1,5 +1,6 @@
 import json
 import os
+import hashlib
 
 import boto
 import boto.s3.connection
@@ -58,6 +59,8 @@ def set_s3_file(filename, config, statsd=None):
 
 def get_s3_file(filename, config, statsd=None, use_cache=True):
     """Returns a S3 file from a bucket. With TTL-ed cache.
+
+    The returned value is a tuple (json, md5 hash)
     """
     conn = _get_connector(config, use_cache=use_cache)
 
@@ -65,7 +68,9 @@ def get_s3_file(filename, config, statsd=None, use_cache=True):
         bucket = conn.get_bucket(config['aws']['bucketname'])
         key = Key(bucket)
         key.key = os.path.split(filename)[-1]
-        return json.loads(key.get_contents_as_string().strip())
+        content = key.get_contents_as_string()
+        hash = hashlib.md5(content).hexdigest()
+        return json.loads(content), hash
 
     if statsd:
         with statsd.timer('get_s3_file'):

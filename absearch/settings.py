@@ -42,6 +42,7 @@ class SearchSettings(object):
     def __init__(self, config_reader, schema_reader=None, counter='memory',
                  counter_options=None, max_age=None):
         self.max_age = max_age
+        self.schema_md5 = self.config_md5 = None
 
         if counter == 'memory':
             counters_backend = MemoryCohortCounters
@@ -62,8 +63,12 @@ class SearchSettings(object):
 
         config is a dict.
         """
-        config = self.config_reader()
-        schema = self.schema_reader and self.schema_reader() or None
+        config, self.config_md5 = self.config_reader()
+
+        if self.schema_reader:
+            schema, self.schema_md5 = self.schema_reader()
+        else:
+            self.schema_md5 = None
 
         if schema is not None:
             validate(config, schema)

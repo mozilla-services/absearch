@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import argparse
+import hashlib
 
 from absearch.settings import SearchSettings
 
@@ -26,11 +27,13 @@ def main(args=sys.argv[1:]):
 
     def read_config():
         with open(configpath) as f:
-            return json.loads(f.read())
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
     def read_schema():
         with open(schemapath) as f:
-            return json.loads(f.read())
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
     try:
         SearchSettings(read_config, read_schema)

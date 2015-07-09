@@ -5,6 +5,7 @@ import json
 import signal
 import logging.config
 import gevent
+import hashlib
 
 from konfig import Config
 from bottle import Bottle
@@ -69,11 +70,13 @@ def initialize_app(config):
 
         def config_reader():
             with open(os.path.join(datadir, configfile)) as f:
-                return json.loads(f.read())
+                data = f.read()
+                return json.loads(data), hashlib.md5(data).hexdigest()
 
         def schema_reader():
             with open(os.path.join(datadir, schemafile)) as f:
-                return json.loads(f.read())
+                data = f.read()
+                return json.loads(data), hashlib.md5(data).hexdigest()
 
     # counter configuration
     counter = app._config['absearch']['counter']
@@ -101,7 +104,8 @@ def hb():
 
     # let's decrement so we don't interfer with real counters
     app.settings._counters.decr('en-US', 'US', incremented_cohort)
-    return {}
+    return {'config_md5': app.settings.config_md5,
+            'schema_md5': app.settings.schema_md5}
 
 
 @app.route('/__info__')
