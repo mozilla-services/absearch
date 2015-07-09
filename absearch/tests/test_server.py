@@ -260,6 +260,12 @@ def test_hb():
     assert 'config_md5' in res.json, res.json
 
 
+def test_root():
+    app = get_app()
+    res = app.get('/')
+    assert res.json.keys() == ['description']
+
+
 def test_excluded():
     app = get_app()
 

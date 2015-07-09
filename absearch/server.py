@@ -91,6 +91,15 @@ def initialize_app(config):
                                   counter_options, max_age)
 
 
+@app.route('/')
+def root():
+    desc = ("This service provides regional search settings for Firefox "
+            "clients. For more on the code, please see "
+            "https://github.com/mozilla-services/absearch")
+
+    return {'description': desc}
+
+
 @app.route('/__heartbeat__')
 def hb():
     # doing a realistic code, but triggering a S3 call as well
