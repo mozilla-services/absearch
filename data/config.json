@@ -95,6 +95,44 @@
       }
     },
 
+    "fr-BE": {
+      "BE": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google1"
+          }
+        },
+        "tests": {
+          "foo23542": {
+            "settings": {
+              "searchDefault": "Google2"
+            },
+            "filters": {
+              "sampleRate": 100,
+              "maxSize": 10000,
+              "startTime": 1567824567
+            },
+            "interval": 2592000
+          },
+          "bar34234": {
+            "settings": {
+              "searchDefault": "Google3"
+            },
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000
+            },
+            "interval": 2592000
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
     "cs-CZ": {
       "CZ": {
         "default": {

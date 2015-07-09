@@ -40,7 +40,10 @@ def runServers():
     _P.append(run_redis())
 
     time.sleep(.1)
+    populate_S3()
 
+
+def populate_S3():
     # populate the bucket in Moto
     config = Config(test_config)
     conn = _get_connector(config)

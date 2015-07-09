@@ -152,8 +152,8 @@ class SearchSettings(object):
 
         # we send back the cohort settings if the cohort is active
         cohort_data = tests[cohort]
-        if 'startTime' in cohort_data:
-            if cohort_data['startTime'] >= time.time():
+        start_time = cohort_data['filters'].get('startTime')
+        if start_time and start_time >= time.time():
                 # not active yet
                 # we send back the default settings
                 return default
@@ -163,8 +163,9 @@ class SearchSettings(object):
     def _is_filtered(self, prod, ver, channel, locale, territory, cohort,
                      filters):
         start_time = filters.get('startTime')
-        if start_time and start_time < time.time():
-            return True
+        if start_time and start_time >= time.time():
+                # not active yet
+                return True
 
         # xxx lower it on first load
         products = [p.lower() for p in filters.get('products', [])]
