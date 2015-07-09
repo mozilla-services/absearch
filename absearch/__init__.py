@@ -4,7 +4,7 @@ try:
 except ImportError:     # pragma: no cover
     pass                # pragma: no cover
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 
 import logging
 
