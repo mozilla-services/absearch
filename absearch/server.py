@@ -4,8 +4,8 @@ import os
 import json
 import signal
 import logging.config
-
 import gevent
+
 from konfig import Config
 from bottle import Bottle
 from statsd import StatsClient
@@ -120,22 +120,21 @@ def handle_500_error(code):
 
 
 @app.route(PATH)
-def add_user_to_cohort(prod, ver, channel, locale, territory, dist, distver):
+def add_user_to_cohort(**kw):
+
     with app._statsd.timer('add_user_to_cohort'):
-        res = app.settings.get(prod, ver, channel, locale, territory, dist,
-                               distver)
+        res = app.settings.get(**kw)
         cohort = res.get('cohort', 'default')
-        cohort = '.'.join(['cohorts', locale, territory, cohort])
+        cohort = '.'.join(['cohorts', kw['locale'],
+                           kw['territory'], cohort])
         app._statsd.incr(cohort)
         return res
 
 
 @app.route('%s/<cohort>' % PATH)
-def get_cohort_settings(prod, ver, channel, locale, territory, dist, distver,
-                        cohort):
+def get_cohort_settings(**kw):
     with app._statsd.timer('get_cohort_settings'):
-        return app.settings.get(prod, ver, channel, locale, territory, dist,
-                                distver, cohort)
+        return app.settings.get(**kw)
 
 
 def main(args=None):

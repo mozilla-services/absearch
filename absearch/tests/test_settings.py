@@ -44,7 +44,8 @@ def _test_max_age(testdir):
 
     # reading again should reload the file
     try:
-        settings.get('prod', 'ver', 'channel', 'loc', 'terr', 'dist', 'ver')
+        settings.get('prod', '39', 'channel', 'loc', 'terr',
+                     'dist', 'distver')
     except KeyError:
         pass
 

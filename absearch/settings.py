@@ -3,6 +3,8 @@ from collections import defaultdict
 import random
 import operator
 import bisect
+import string
+from string import ascii_lowercase, ascii_uppercase, digits
 
 from jsonschema import validate
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
@@ -21,6 +23,18 @@ def accumulate(iterable):
     for element in it:
         total = operator.add(total, element)
         yield total
+
+
+_O = ascii_uppercase + ascii_lowercase + digits + '.-'
+_S = ascii_lowercase + ascii_lowercase + digits + '.-'
+_TAB = string.maketrans(_O, _S)
+
+
+def _lower(s):
+    try:
+        return string.translate(s, _TAB)
+    except Exception:
+        return s.lower()
 
 
 class SearchSettings(object):
@@ -61,11 +75,11 @@ class SearchSettings(object):
         self._territories = defaultdict(list)
 
         for locale, locale_data in config['locales'].items():
-            locale = locale.lower()
+            locale = _lower(locale)
 
             # building indexes
             for territory, data in locale_data.items():
-                territory = territory.lower()
+                territory = _lower(territory)
 
                 tests = {}
                 if territory == 'default':
@@ -74,9 +88,18 @@ class SearchSettings(object):
                 else:
                     # default settings
                     default = data['default']
-                    # tests
-                    if 'tests' in data:
-                        tests = data['tests']
+
+                    # converting filters
+                    tests = data.get('tests', {})
+
+                    for name, test in tests.items():
+                        filters = test['filters']
+                        filters['products'] = [_lower(p) for p in
+                                               filters.get('products', [])]
+                        filters['channels'] = [_lower(c) for c in
+                                               filters.get('channels', [])]
+                        filters['minVersion'] = int(filters.get('minVersion',
+                                                                -1))
 
                 self._locales[locale, territory] = default, tests
                 self._territories[locale].append(territory)
@@ -97,15 +120,15 @@ class SearchSettings(object):
             self.load()
 
         # we should do this at the http level
-        locale = locale.lower()
-        territory = territory.lower()
-        prod = prod.lower()
-        ver = ver.lower()
-        channel = channel.lower()
-        dist = dist.lower()
-        distver = distver.lower()
+        locale = _lower(locale)
+        territory = _lower(territory)
+        prod = _lower(prod)
+        ver = int(ver.split('.')[0])
+        channel = _lower(channel)
+        dist = _lower(dist)
+        distver = _lower(distver)
         if cohort:
-            cohort = cohort.lower()
+            cohort = _lower(cohort)
 
         # if dist is part of the excluded list, we're sending back
         # the global interval value
@@ -167,19 +190,13 @@ class SearchSettings(object):
                 # not active yet
                 return True
 
-        # xxx lower it on first load
-        products = [p.lower() for p in filters.get('products', [])]
-        if len(products) > 0 and prod not in products:
+        if len(filters['products']) > 0 and prod not in filters['products']:
             return True
 
-        # xxx lower it on first load
-        channels = [c.lower() for c in filters.get('channels', [])]
-        if len(channels) > 0 and channel not in channels:
+        if len(filters['channels']) > 0 and channel not in filters['channels']:
             return True
 
-        ver = int(ver.split('.')[0])
-        min_version = int(filters.get('minVersion', '-1'))
-        if ver < min_version:
+        if ver < filters['minVersion']:
             return True
 
         max = filters.get('maxSize')
