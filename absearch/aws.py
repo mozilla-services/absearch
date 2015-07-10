@@ -1,11 +1,19 @@
 import json
 import os
 import hashlib
+import socket
 
 import boto
 import boto.s3.connection
 from boto.s3.key import Key
 from boto.s3 import connect_to_region as conn_region
+from boto.s3.connection import S3ResponseError
+
+from absearch.exceptions import ReadError
+
+
+class AWSReadError(ReadError):
+    pass
 
 
 _CONNECTOR = None
@@ -32,6 +40,9 @@ def _get_connector(config, use_cache=False):
             conn = conn_region(config['aws']['region'],     # pragma: no cover
                                is_secure=is_secure, **kw)   # pragma: no cover
 
+        conn.num_retries = int(config['aws'].get('num_retries', 1))
+        timeout = float(config['aws'].get('timeout', 5))
+        conn.http_connection_kwargs['timeout'] = timeout
         if use_cache:
             _CONNECTOR = conn
         else:
@@ -62,13 +73,22 @@ def get_s3_file(filename, config, statsd=None, use_cache=True):
 
     The returned value is a tuple (json, md5 hash)
     """
-    conn = _get_connector(config, use_cache=use_cache)
+    try:
+        conn = _get_connector(config, use_cache=use_cache)
+    except (socket.error, S3ResponseError) as e:
+        # XXX tell something to ops
+        raise AWSReadError(str(e))
 
     def _get():
-        bucket = conn.get_bucket(config['aws']['bucketname'])
-        key = Key(bucket)
-        key.key = os.path.split(filename)[-1]
-        content = key.get_contents_as_string()
+        try:
+            bucket = conn.get_bucket(config['aws']['bucketname'])
+            key = Key(bucket)
+            key.key = os.path.split(filename)[-1]
+            content = key.get_contents_as_string()
+        except (socket.error, S3ResponseError) as e:
+            # XXX tell something to ops
+            raise AWSReadError(str(e))
+
         hash = hashlib.md5(content).hexdigest()
         return json.loads(content), hash
 

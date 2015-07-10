@@ -5,6 +5,7 @@ import signal
 import time
 from cStringIO import StringIO
 from contextlib import contextmanager
+import socket
 
 import redis
 from webtest import TestApp
@@ -15,6 +16,7 @@ from absearch.aws import _get_connector, set_s3_file
 
 
 def run_moto():
+    socket.setdefaulttimeout(.1)
     args = [sys.executable, '-c',
             "from moto import server; server.main()",
             's3bucket_path']

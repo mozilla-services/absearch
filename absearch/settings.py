@@ -7,7 +7,9 @@ import string
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from jsonschema import validate
+
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
+from absearch.exceptions import ReadError
 
 
 DEFAULT_INTERVAL = 3600 * 24
@@ -43,6 +45,7 @@ class SearchSettings(object):
                  counter_options=None, max_age=None):
         self.max_age = max_age
         self.schema_md5 = self.config_md5 = None
+        self._last_loaded = None
 
         if counter == 'memory':
             counters_backend = MemoryCohortCounters
@@ -63,12 +66,22 @@ class SearchSettings(object):
 
         config is a dict.
         """
-        config, self.config_md5 = self.config_reader()
+        try:
+            config, self.config_md5 = self.config_reader()
 
-        if self.schema_reader:
-            schema, self.schema_md5 = self.schema_reader()
-        else:
-            self.schema_md5 = None
+            if self.schema_reader:
+                schema, self.schema_md5 = self.schema_reader()
+            else:
+                self.schema_md5 = None
+        except ReadError:
+            # if it's the first load we raise
+            if self._last_loaded is None:
+                raise
+            else:
+                # otherwise we keep the existing config
+                # but we tell ops about the incident
+                # XXX tell something to ops
+                return
 
         if schema is not None:
             validate(config, schema)
