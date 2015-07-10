@@ -182,9 +182,9 @@ class SearchSettings(object):
         cohort_data = tests[cohort]
         start_time = cohort_data['filters'].get('startTime')
         if start_time and start_time >= time.time():
-                # not active yet
-                # we send back the default settings
-                return default
+            # not active yet
+            # we send back the default settings
+            return default
 
         return cohort_data
 
