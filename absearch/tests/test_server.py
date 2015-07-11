@@ -62,14 +62,13 @@ def test_just_3_keys():
     assert keys == wanted or wanted2, keys
 
 
-def test_weird_cohort_name():
-    # we want to make sure a cohort with a weird territory
-    # that looks like a locale falls back to a territory
-    # we have. see issue #5
+def test_weird_locale_name():
+    # we want to make sure a cohort with a weird locale fallsback
+    # to a local we have. see issue #5
     app = get_app()
 
     # get a cohort
-    path = '/1/firefox/39/beta/cs-CZ/cz-TU/default/default'
+    path = '/1/firefox/39/beta/cs-WAAAT/cz/default/default'
     res = app.get(path)
 
     # we get one of those and not 'Google' because the territory

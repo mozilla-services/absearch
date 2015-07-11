@@ -133,6 +133,21 @@
       }
     },
 
+    "cs": {
+      "CZ": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google1"
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
     "cs-CZ": {
       "CZ": {
         "default": {

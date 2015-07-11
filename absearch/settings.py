@@ -156,15 +156,12 @@ class SearchSettings(object):
 
         # if the provided territory is not listed in that locale,
         # switch it to default
+        if locale not in self._territories and '-' in locale:
+            if locale.split('-')[0] in self._territories:
+                locale = locale.split('-')[0]
+
         if territory not in self._territories[locale]:
-            if '-' in territory:
-                first_part = territory.split('-')[0]
-                if first_part in self._territories[locale]:
-                    territory = first_part
-                else:
-                    territory = 'default'
-            else:
-                territory = 'default'
+            territory = 'default'
 
         # if we don't have that, send back an interval
         if (locale, territory) not in self._locales:
