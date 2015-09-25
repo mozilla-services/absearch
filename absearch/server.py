@@ -45,9 +45,12 @@ def initialize_app(config):
     logging.config.fileConfig(config)
 
     # statsd configuration
-    app._statsd = StatsClient(app._config['statsd']['host'],
-                              app._config['statsd']['port'],
-                              prefix=app._config['statsd']['prefix'])
+    if app._config['statsd']['enabled']:
+        app._statsd = StatsClient(app._config['statsd']['host'],
+                                  app._config['statsd']['port'],
+                                  prefix=app._config['statsd']['prefix'])
+    else:
+        app._statsd = None
 
     # sentry configuration
     if app._config['sentry']['enabled']:
@@ -134,20 +137,37 @@ def handle_500_error(code):
 
 @app.route(PATH)
 def add_user_to_cohort(**kw):
+    if app._statsd:
+        timer = app._statsd.timer('add_user_to_cohort')
+        timer.start()
 
-    with app._statsd.timer('add_user_to_cohort'):
-        res = app.settings.get(**kw)
-        cohort = res.get('cohort', 'default')
-        cohort = '.'.join(['cohorts', kw['locale'],
-                           kw['territory'], cohort])
-        app._statsd.incr(cohort)
-        return res
+    res = app.settings.get(**kw)
+
+    if app._statsd:
+        timer.stop()
+
+        if app._config['statsd']['count_cohorts_enabled']:
+            cohort = res.get('cohort', 'default')
+            cohort = 'cohorts.' + '_'.join([kw['locale'],
+                                            kw['territory'],
+                                            cohort])
+            app._statsd.incr(cohort)
+
+    return res
 
 
 @app.route('%s/<cohort>' % PATH)
 def get_cohort_settings(**kw):
-    with app._statsd.timer('get_cohort_settings'):
-        return app.settings.get(**kw)
+    if app._statsd:
+        timer = app._statsd.timer('get_cohort_settings')
+        timer.start()
+
+    res = app.settings.get(**kw)
+
+    if app._statsd:
+        timer.stop()
+
+    return res
 
 
 def main(args=None):
