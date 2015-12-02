@@ -259,7 +259,7 @@ class SearchSettings(object):
         cumdist = list(accumulate(weights))
         x = random.random() * 100
         picked = choices[bisect.bisect(cumdist, x)]
-        self._counters.incr(locale, territory, cohort)
+        self._counters.incr(locale, territory, picked)
 
         # and send it back
         if picked == 'default':
