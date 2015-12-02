@@ -276,6 +276,13 @@ def test_sample_rate():
     assert 0 < counts['three'] <= 20, counts
     assert 955 <= counts['default'] <= 985, counts
 
+    # verifying redis counters
+    counters = list(dump_counters())
+    assert 'de-de:de:one:%d' % counts['one'] in counters
+    assert 'de-de:de:two:%d' % counts['two'] in counters
+    assert 'de-de:de:three:%d' % counts['three'] in counters
+    assert 'de-de:de:default:%d' % counts['default'] in counters
+
 
 def test_hb():
     app = get_app()
@@ -342,11 +349,11 @@ def test_reload():
 
 
 def test_main():
-    with capture():
+    with capture() as f:
         greenlet = gevent.spawn(main, [test_config])
         gevent.sleep(0.1)
 
-    assert greenlet.started
+    assert greenlet.started, f
     greenlet.kill()
     gevent.wait([greenlet])
     assert not greenlet.started
