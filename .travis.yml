@@ -10,6 +10,7 @@ env:
 install:
     - if [[ $ACTION != loadtest ]]; then pip install tox; fi
 script:
+    - cp boto ~/.boto
     - if [[ $ACTION != loadtest ]]; then tox -e $TOX_ENV; fi
     - if [[ $ACTION == loadtest ]]; then make loadtest-check; fi
 after_success:
