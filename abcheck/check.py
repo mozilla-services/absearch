@@ -1,3 +1,4 @@
+import urlparse
 import argparse
 import sys
 from collections import defaultdict
@@ -38,8 +39,14 @@ def run_request(req_num, endpoint):
 
 
 def _display_redis_counters(endpoint):
+    endpoint = urlparse.urlparse(endpoint)
+    host = endpoint.netloc.split(':')
+    if len(host) == 1:
+        port = '6379'
+    else:
+        host, port = host
     try:
-        redis_server = redis.StrictRedis(host='localhost', port='6379', db=0)
+        redis_server = redis.StrictRedis(host=host, port=port, db=0)
         print('Redis counters')
         print('--------------')
         for key in redis_server.smembers('absearch:keys'):
@@ -58,7 +65,7 @@ def main():
                         type=str, default='http://localhost:8080')
 
     parser.add_argument('-r', '--redis', help='Redis server endpoint.',
-                        type=str, default='redis://localhost:7777')
+                        type=str, default='redis://localhost:6379')
 
     parser.add_argument('-l', '--locale', help='Locale',
                         type=str, default='fr-FR')
