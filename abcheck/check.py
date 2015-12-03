@@ -5,6 +5,7 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import requests
 from progress.counter import Counter
+import redis
 
 
 reqs = requests.Session()
@@ -27,11 +28,27 @@ def _display_stats():
 
 
 def run_request(req_num, endpoint):
+    if _STOP:
+        return
     res = reqs.get(endpoint)
     if _BAR is not None:
         _BAR.next()
     cohort = res.json().get('cohort', 'default')
     _STATS[cohort] += 1
+
+
+def _display_redis_counters(endpoint):
+    try:
+        redis_server = redis.StrictRedis(host='localhost', port='6379', db=0)
+        print('Redis counters')
+        print('--------------')
+        for key in redis_server.smembers('absearch:keys'):
+            print('%s:%s' % (key, redis_server.get(key)))
+        print('')
+    except redis.exceptions.ConnectionError:
+        print('Could not reach redis')
+        return
+
 
 
 def main():
@@ -41,7 +58,7 @@ def main():
                         type=str, default='http://localhost:8080')
 
     parser.add_argument('-r', '--redis', help='Redis server endpoint.',
-                        type=str, default='http://localhost:7777')
+                        type=str, default='redis://localhost:7777')
 
     parser.add_argument('-l', '--locale', help='Locale',
                         type=str, default='fr-FR')
@@ -63,6 +80,7 @@ def main():
 
     args = parser.parse_args()
 
+    _display_redis_counters(args.redis)
 
     executor = ThreadPoolExecutor(max_workers=100)
     future_to_resp = []
@@ -75,14 +93,17 @@ def main():
     path = path % (args.product, args.product_version, args.channel,
                    args.locale, args.territory)
 
-    endpoint = 'http://localhost:8080' + path
-
-    # running the requests
-    for req_num in range(args.hits):
-        future = executor.submit(run_request, req_num, endpoint)
-        future_to_resp.append(future)
+    endpoint = args.server + path
 
     global _STOP
+
+    # running the requests
+    try:
+        for req_num in range(args.hits):
+            future = executor.submit(run_request, req_num, endpoint)
+            future_to_resp.append(future)
+    except KeyboardInterrupt:
+        _STOP = True
 
     results = []
 
@@ -104,7 +125,7 @@ def main():
     _BAR.finish()
     print('')
     _display_stats()
-
+    _display_redis_counters(args.redis)
 
 
 if __name__ == '__main__':

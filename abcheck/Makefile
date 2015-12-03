@@ -13,7 +13,7 @@ OBJECTS = .venv .coverage
 all: install
 install: $(INSTALL_STAMP)
 $(INSTALL_STAMP): $(PYTHON)
-	$(VENV)/bin/pip install requests futures progress
+	$(VENV)/bin/pip install requests futures progress redis
 	touch $(INSTALL_STAMP)
 
 virtualenv: $(PYTHON)
