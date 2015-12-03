@@ -37,8 +37,8 @@ def test_all_locales():
 
     for locale, config in locale_configs.iteritems():
         for territory, search_providers in config.iteritems():
-            path = "/1/firefox/39/beta/{0}/{1}/default/default".format(locale,
-                                                                    territory)
+            path = "/1/firefox/39/beta/{0}/{1}/default/default"
+            path = path.format(locale, territory)
             res = app.get(path)
             assert res.json["settings"]["searchDefault"] in search_providers
 

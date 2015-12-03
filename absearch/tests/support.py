@@ -13,6 +13,7 @@ from konfig import Config
 
 from absearch import server
 from absearch.aws import _get_connector, set_s3_file
+from absearch.counters import RedisCohortCounters
 
 
 def run_moto():
@@ -66,6 +67,12 @@ def flush_redis():
     config = Config(test_config)
     _redis = redis.StrictRedis(**dict(config['redis']))
     _redis.flushdb()
+
+
+def dump_counters():
+    config = Config(test_config)
+    counters = RedisCohortCounters(**dict(config['redis']))
+    return counters.dump()
 
 
 def stopServers():
