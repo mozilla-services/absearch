@@ -49,6 +49,15 @@ def main():
     parser.add_argument('-t', '--territory', help='Territory',
                         type=str, default='FR')
 
+    parser.add_argument('-p', '--product', help='Product',
+                        type=str, default='firefox')
+
+    parser.add_argument('--product-version', help='Product Version',
+                        type=str, default='43')
+
+    parser.add_argument('--channel', help='Channel', type=str,
+                        default='release')
+
     parser.add_argument('--hits', help='Number of hits to perform.',
                         type=int, default=1000)
 
@@ -61,8 +70,11 @@ def main():
     global _BAR
     _BAR = Counter('Processing requests: ')
 
-    path  = '/1/firefox/43/release/%s/%s/default/default' % (
-            args.locale, args.territory)
+    path  = '/1/%s/%s/%s/%s/%s/default/default'
+
+    path = path % (args.product, args.product_version, args.channel,
+                   args.locale, args.territory)
+
     endpoint = 'http://localhost:8080' + path
 
     # running the requests
