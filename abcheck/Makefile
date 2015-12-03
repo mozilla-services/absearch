@@ -1,6 +1,6 @@
 VIRTUALENV = virtualenv-2.7
 SPHINX_BUILDDIR = docs/_build
-VENV := $(shell echo $${VIRTUAL_ENV-.venv})
+VENV := .
 PYTHON = $(VENV)/bin/python
 DEV_STAMP = $(VENV)/.dev_env_installed.stamp
 INSTALL_STAMP = $(VENV)/.install.stamp
@@ -13,7 +13,7 @@ OBJECTS = .venv .coverage
 all: install
 install: $(INSTALL_STAMP)
 $(INSTALL_STAMP): $(PYTHON)
-	$(VENV)/bin/pip install requests
+	$(VENV)/bin/pip install requests futures progress
 	touch $(INSTALL_STAMP)
 
 virtualenv: $(PYTHON)
