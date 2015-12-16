@@ -1,3 +1,6 @@
+ #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import urlparse
 import argparse
 import sys
@@ -9,8 +12,20 @@ import requests
 reqs = requests.Session()
 
 LOCALES = [('en-US', 'US', 'Yahoo'),
-           ('fr-FR', 'FR', 'Google')]
+           ('en-GB', 'GB', 'Google'),
+           ('de-DE', 'DE', 'Google'),
+           ('pt-BR', 'BR', 'Google'),
+           ('be', 'BE', 'Yandex'),
+           ('ru', 'RU', 'Yandex'),
+           ('uk', 'UK', 'Yandex'),
+           ('kk', 'KK', 'Yandex'),
+           ('tr', 'TR', 'Yandex'),
+           ('zh-TW', 'TW', 'Google'),
+           ('zh-TW', 'HK', 'Google'),
+           ('fr-FR', 'FR', 'Google'),]
 
+           # specific encoding for this?
+           # ('zh-CN', 'CN', 'ç™¾åº¦'),
 
 
 def main():
@@ -37,7 +52,7 @@ def main():
 
 
     for locale, territory, required in LOCALES:
-        print('Checking %s %s' % (locale, territory))
+        print('Checking %s %s. Expecting: %s' % (locale, territory, required))
 
         endpoint = path % (args.product, args.product_version, args.channel,
                            locale, territory)
@@ -45,6 +60,7 @@ def main():
         endpoint = args.server + endpoint
 
         result = reqs.get(endpoint).json()
+        print(result)
         res = result['settings']['searchDefault']
         if res != required:
             raise Exception('Expected %r for %r, got %r' % (required, res,
