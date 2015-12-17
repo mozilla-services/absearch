@@ -186,6 +186,9 @@ class SearchSettings(object):
             if key not in allowed_keys:
                 del res[key]
 
+        # XXX remove me in next release
+        if 'cohort' in res:
+            del res['cohort']
         return res
 
     def _get_cohort(self, locale, territory, cohort):
