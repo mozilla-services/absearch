@@ -61,8 +61,8 @@ def main():
         print(result)
         res = result['settings']['searchDefault']
         if res != required:
-            raise Exception('Expected %r for %r, got %r' % (required, res,
-                endpont))
+            raise Exception('Expected %r for %r, got %r' % (required, endpoint,
+                res))
 
 
 
