@@ -11,21 +11,19 @@ import requests
 
 reqs = requests.Session()
 
-LOCALES = [('en-US', 'US', 'Yahoo'),
-           ('en-GB', 'GB', 'Google'),
-           ('de-DE', 'DE', 'Google'),
-           ('pt-BR', 'BR', 'Google'),
-           ('be', 'BE', 'Yandex'),
-           ('ru', 'RU', 'Yandex'),
-           ('uk', 'UK', 'Yandex'),
-           ('kk', 'KK', 'Yandex'),
-           ('tr', 'TR', 'Yandex'),
-           ('zh-TW', 'TW', 'Google'),
-           ('zh-TW', 'HK', 'Google'),
-           ('fr-FR', 'FR', 'Google'),]
-
-           # specific encoding for this?
-           # ('zh-CN', 'CN', 'ç™¾åº¦'),
+LOCALES = [('en-US', 'US', u'Yahoo'),
+           ('en-GB', 'GB', u'Google'),
+           ('de-DE', 'DE', u'Google'),
+           ('pt-BR', 'BR', u'Google'),
+           ('be', 'BE', u'Yandex'),
+           ('ru', 'RU', u'Yandex'),
+           ('uk', 'UK', u'Yandex'),
+           ('kk', 'KK', u'Yandex'),
+           ('tr', 'TR', u'Yandex'),
+           ('zh-TW', 'TW', u'Google'),
+           ('zh-TW', 'HK', u'Google'),
+           ('fr-FR', 'FR', u'Google'),
+           ('zh-CN', 'CN', u'百度')]
 
 
 def main():
