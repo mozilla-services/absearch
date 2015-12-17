@@ -104,6 +104,8 @@ def test_set_cohort2():
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default/meh'
     res = app.get(path)
     assert res.json['settings']['searchDefault'] == 'Google1'
+    # and we should not see the cohort key in there anymore
+    assert 'cohort' not in res.json
 
 
 def test_start_time():

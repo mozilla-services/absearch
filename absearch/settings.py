@@ -169,9 +169,9 @@ class SearchSettings(object):
 
         # we got something!
         if cohort is not None:
-            res = self._get_cohort(locale, territory, cohort)
-            if cohort != 'default':
-                res['cohort'] = cohort
+            res, picked_cohort = self._get_cohort(locale, territory, cohort)
+            if picked_cohort != 'default':
+                res['cohort'] = picked_cohort
         else:
             # pick one
             res = self._pick_cohort(locale, territory, prod, ver, channel)
@@ -186,9 +186,6 @@ class SearchSettings(object):
             if key not in allowed_keys:
                 del res[key]
 
-        # XXX remove me in next release
-        if 'cohort' in res:
-            del res['cohort']
         return res
 
     def _get_cohort(self, locale, territory, cohort):
@@ -196,7 +193,7 @@ class SearchSettings(object):
 
         if cohort not in tests:
             # we send back the default settings
-            return default
+            return default, 'default'
 
         # we send back the cohort settings if the cohort is active
         cohort_data = tests[cohort]
@@ -204,9 +201,9 @@ class SearchSettings(object):
         if start_time and start_time >= time.time():
             # not active yet
             # we send back the default settings
-            return default
+            return default, 'default'
 
-        return cohort_data
+        return cohort_data, cohort
 
     def _is_filtered(self, prod, ver, channel, locale, territory, cohort,
                      filters):
