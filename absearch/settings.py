@@ -5,6 +5,7 @@ import operator
 import bisect
 import string
 from string import ascii_lowercase, ascii_uppercase, digits
+import copy
 
 from jsonschema import validate
 
@@ -184,7 +185,7 @@ class SearchSettings(object):
             res['interval'] = self._default_interval
 
         allowed_keys = ('cohort', 'settings', 'interval')
-        res = dict(res)
+        res = copy.deepcopy(res)
 
         for key in list(res.keys()):
             if key not in allowed_keys:
@@ -196,18 +197,19 @@ class SearchSettings(object):
         default, tests = self._locales[locale, territory]
 
         if cohort not in tests:
-            # we send back the default settings
-            return default, 'default'
+            # we send back a copy of the default settings
+            return copy.deepcopy(default), 'default'
 
         # we send back the cohort settings if the cohort is active
         cohort_data = tests[cohort]
         start_time = cohort_data['filters'].get('startTime')
         if start_time and start_time >= time.time():
             # not active yet
-            # we send back the default settings
-            return default, 'default'
+            # we send back a copy of the default settings
+            return copy.deepcopy(default), 'default'
 
-        return cohort_data, cohort
+        # we send back a copy of the cohort settings
+        return copy.deepcopy(cohort_data), cohort
 
     def _is_filtered(self, prod, ver, channel, locale, territory, cohort,
                      filters):
@@ -239,7 +241,7 @@ class SearchSettings(object):
 
         if tests == {}:
             self._counters.incr(locale, territory, 'default')
-            return default
+            return copy.deepcopy(default)
 
         # building a list of filtered cohorts with their weights
         total_weight = 0
@@ -267,8 +269,8 @@ class SearchSettings(object):
 
         # and send it back
         if picked == 'default':
-            return default
+            return copy.deepcopy(default)
 
-        settings = tests[picked]
+        settings = copy.deepcopy(tests[picked])
         settings['cohort'] = picked
         return settings

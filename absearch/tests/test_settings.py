@@ -99,3 +99,35 @@ def test_loaded_broken():
         pass
     else:
         raise AssertionError()
+
+
+def test_immutable_locales():
+    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+    testdir = tempfile.mkdtemp()
+    confpath = os.path.join(testdir, 'config.json')
+
+    shutil.copyfile(os.path.join(datadir, 'config.json'),
+                    os.path.join(testdir, 'config.json'))
+
+    def config_reader():
+        with open(confpath) as f:
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
+
+    try:
+        settings = SearchSettings(config_reader, schema_reader=None)
+    finally:
+        shutil.rmtree(testdir)
+
+    # the data sent by _get_cohort or _pick_cohort should be a copy
+    res, __ = settings._get_cohort('fr-fr', 'fr', 'default')
+    res['bah'] = 1
+    res, __ = settings._get_cohort('fr-fr', 'fr', 'default')
+    assert 'bah' not in res
+
+    res = settings._pick_cohort('fr-fr', 'fr', 'firefox', 42, 'release')
+    setting = res['settings']
+    setting['bah'] = 1
+    res = settings._pick_cohort('fr-fr', 'fr', 'firefox', 42, 'release')
+    setting = res['settings']
+    assert 'bah' not in setting
