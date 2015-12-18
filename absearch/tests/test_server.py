@@ -108,6 +108,26 @@ def test_set_cohort2():
     assert 'cohort' not in res.json
 
 
+def test_pick_test_cohort_and_ask_again():
+    app = get_app()
+
+    # get a cohort
+    path = '/1/firefox/39/beta/fr-FR/fr/default/default'
+    res = app.get(path)
+
+    res = res.json
+    cohort = res.get('cohort', 'default')
+    assert res['cohort'] == 'foo'
+    settings = res['settings']
+
+    # now that we have a cohort let's check back the settings
+    path += '/' + cohort
+    res = app.get(path)
+
+    assert res.json['settings'] == settings
+    assert res.json['cohort'] == 'foo'
+
+
 def test_start_time():
     app = get_app()
     # bar34234 or default

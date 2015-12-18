@@ -66,6 +66,7 @@ class SearchSettings(object):
 
         config is a dict.
         """
+        schema = None
         try:
             config, self.config_md5 = self.config_reader()
 
