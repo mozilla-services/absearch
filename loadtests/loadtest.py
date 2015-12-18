@@ -21,6 +21,7 @@ LOCALES = [('en-US', 'US', u'Yahoo'),
            ('fr-FR', 'FR', u'Google'),
            ('zh-CN', 'CN', u'百度')]
 
+COHORT = ['/web.xml', '/passwd', '/script>', '', '', '', '', '', '', '']
 
 
 class TestSearch(TestCase):
@@ -29,11 +30,12 @@ class TestSearch(TestCase):
 
     def test_api(self):
 
-        # getting a cohort
+        # getting a cohort or asking for a crap cohort
+        # everything should return the default settings
         locale, territory, expected = random.choice(LOCALES)
-        res = self.session.get(self.server_url +
-                             '/1/firefox/43/beta/%s/%s/release/default/default'
-                              % (locale, territory))
+        cohort = random.choice(COHORT)
+        path = '/1/firefox/43/release/%s/%s/default/default' + cohort
+        res = self.session.get(self.server_url + path % (locale, territory))
 
         self.assertEqual(res.status_code, 200)
         self.assertTrue('settings' in res.json())
