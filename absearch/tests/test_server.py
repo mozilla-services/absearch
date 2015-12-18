@@ -418,3 +418,11 @@ def test_close():
         assert False, "We should exit on a close() call"
     except SystemExit:
         pass
+
+
+def test_invalid_url():
+    app = get_app()
+    # these should return 404
+    for url in ('/1/firefox/.*/release/.*/.*/default/default/web.xml',
+                '/1/firefox/.*/release/.*/.*/default/default'):
+        app.get(url, status=404)

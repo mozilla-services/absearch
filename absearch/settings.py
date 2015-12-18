@@ -142,7 +142,10 @@ class SearchSettings(object):
         locale = _lower(locale)
         territory = _lower(territory)
         prod = _lower(prod)
-        ver = int(ver.split('.')[0])
+        try:
+            ver = int(ver.split('.')[0])
+        except ValueError:
+            raise ValueError("Bad version")
         channel = _lower(channel)
         dist = _lower(dist)
         distver = _lower(distver)

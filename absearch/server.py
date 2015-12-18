@@ -8,7 +8,7 @@ import gevent
 import hashlib
 
 from konfig import Config
-from bottle import Bottle
+from bottle import Bottle, HTTPError
 from statsd import StatsClient
 from raven import Client as Sentry
 
@@ -136,7 +136,11 @@ def handle_500_error(code):
 def add_user_to_cohort(**kw):
 
     with app._statsd.timer('add_user_to_cohort'):
-        res = app.settings.get(**kw)
+        try:
+            res = app.settings.get(**kw)
+        except ValueError:
+            raise HTTPError(status=404)
+
         cohort = res.get('cohort', 'default')
         cohort = '.'.join(['cohorts', kw['locale'],
                            kw['territory'], cohort])
@@ -147,7 +151,10 @@ def add_user_to_cohort(**kw):
 @app.route('%s/<cohort>' % PATH)
 def get_cohort_settings(**kw):
     with app._statsd.timer('get_cohort_settings'):
-        return app.settings.get(**kw)
+        try:
+            return app.settings.get(**kw)
+        except ValueError:
+            raise HTTPError(status=404)
 
 
 def main(args=None):
