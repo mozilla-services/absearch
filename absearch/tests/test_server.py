@@ -3,6 +3,7 @@ from collections import defaultdict
 import shutil
 import json
 import time
+import sys
 
 import gevent
 
@@ -10,7 +11,7 @@ from absearch import __version__
 from absearch.tests.support import (runServers, stopServers, get_app, capture,
                                     test_config, flush_redis, populate_S3,
                                     dump_counters)
-from absearch.server import reload, main
+from absearch.server import reload, main, close
 
 
 def setUp():
@@ -379,3 +380,41 @@ def test_main():
     greenlet.kill()
     gevent.wait([greenlet])
     assert not greenlet.started
+
+
+def test_main_no_args():
+    with capture() as f:
+        greenlet = gevent.spawn(main, [])
+        gevent.sleep(0.1)
+
+    assert greenlet.started, f
+    greenlet.kill()
+    gevent.wait([greenlet])
+    assert not greenlet.started
+
+
+def test_main_sys_args():
+    old_argv = list(sys.argv)
+    config = os.path.join(os.path.dirname(__file__), '..', '..',
+                          'config', 'absearch.ini')
+    sys.argv = ['', config]
+
+    try:
+        with capture() as f:
+            greenlet = gevent.spawn(main)
+            gevent.sleep(0.1)
+
+        assert greenlet.started, f
+        greenlet.kill()
+        gevent.wait([greenlet])
+        assert not greenlet.started
+    finally:
+        sys.argv[:] = old_argv
+
+
+def test_close():
+    try:
+        close()
+        assert False, "We should exit on a close() call"
+    except SystemExit:
+        pass
