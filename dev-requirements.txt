@@ -3,4 +3,4 @@ WebTest
 nose
 nose-cov
 coverage
-moto
+moto==0.4.19

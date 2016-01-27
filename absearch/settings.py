@@ -40,6 +40,12 @@ def _lower(s):
         return s.lower()
 
 
+def _match_key(key, mapping):
+    for mkey in mapping.keys():
+        if key.lower() == mkey.lower():
+            return mkey
+
+
 class SearchSettings(object):
 
     def __init__(self, config_reader, schema_reader=None, counter='memory',
@@ -110,9 +116,9 @@ class SearchSettings(object):
                     default = data['default']
 
                     # converting filters
-                    tests = data.get('tests', {})
 
-                    for name, test in tests.items():
+                    for name, test in data.get('tests', {}).items():
+                        name = name.lower()
                         filters = test['filters']
                         filters['products'] = [_lower(p) for p in
                                                filters.get('products', [])]
@@ -120,6 +126,7 @@ class SearchSettings(object):
                                                filters.get('channels', [])]
                         filters['minVersion'] = int(filters.get('minVersion',
                                                                 -1))
+                        tests[name] = test
 
                 self._locales[locale, territory] = default, tests
                 self._territories[locale].append(territory)

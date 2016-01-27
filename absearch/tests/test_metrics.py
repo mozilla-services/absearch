@@ -2,6 +2,8 @@ import statsd
 import time
 from collections import defaultdict
 from contextlib import contextmanager
+from absearch.tests.support import runServers, stopServers, get_app
+from absearch import server
 
 
 class FakeStatsd(object):
@@ -20,10 +22,6 @@ class FakeStatsd(object):
 
 
 statsd.StatsClient = FakeStatsd
-
-from absearch.tests.support import runServers, stopServers, get_app
-from absearch import server
-
 server.StatsClient = FakeStatsd
 
 
