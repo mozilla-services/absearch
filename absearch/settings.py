@@ -40,12 +40,6 @@ def _lower(s):
         return s.lower()
 
 
-def _match_key(key, mapping):
-    for mkey in mapping.keys():
-        if key.lower() == mkey.lower():
-            return mkey
-
-
 class SearchSettings(object):
 
     def __init__(self, config_reader, schema_reader=None, counter='memory',
@@ -116,9 +110,7 @@ class SearchSettings(object):
                     default = data['default']
 
                     # converting filters
-
                     for name, test in data.get('tests', {}).items():
-                        name = name.lower()
                         filters = test['filters']
                         filters['products'] = [_lower(p) for p in
                                                filters.get('products', [])]
@@ -157,8 +149,6 @@ class SearchSettings(object):
         channel = _lower(channel)
         dist = _lower(dist)
         distver = _lower(distver)
-        if cohort:
-            cohort = _lower(cohort)
 
         # if dist is part of the excluded list, we're sending back
         # the global interval value

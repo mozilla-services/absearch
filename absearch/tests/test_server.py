@@ -118,7 +118,7 @@ def test_pick_test_cohort_and_ask_again():
 
     res = res.json
     cohort = res.get('cohort', 'default')
-    assert res['cohort'] == 'foobaz'
+    assert res['cohort'] == 'fooBaz'
     settings = res['settings']
 
     # now that we have a cohort let's check back the settings
@@ -126,7 +126,7 @@ def test_pick_test_cohort_and_ask_again():
     res = app.get(path)
 
     assert res.json['settings'] == settings
-    assert res.json['cohort'] == 'foobaz'
+    assert res.json['cohort'] == 'fooBaz'
 
 
 def test_start_time():
@@ -214,7 +214,7 @@ def test_max_cohort():
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     for i in range(3):
         res = app.get(path)
-        assert res.json.get('cohort') == 'foobaz', i
+        assert res.json.get('cohort') == 'fooBaz', i
 
     # should be exausthed now, let's check we get a default now
     res = app.get(path)
@@ -225,7 +225,7 @@ def test_max_cohort():
     # the counters should be 1 for the default, 3 for foo
     counters = list(dump_counters())
     counters.sort()
-    assert counters == ['fr-fr:fr:default:1', 'fr-fr:fr:foobaz:3']
+    assert counters == ['fr-fr:fr:default:1', 'fr-fr:fr:fooBaz:3']
 
 
 def test_product_filter():
@@ -236,7 +236,7 @@ def test_product_filter():
     # get the cohort for fr-FR+fr
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     res = app.get(path)
-    assert res.json.get('cohort') == 'foobaz', res.json
+    assert res.json.get('cohort') == 'fooBaz', res.json
 
     # if the product it not firefox, we should bypass the foo cohort
     path = '/1/thunderbird/39/beta/fr-FR/fr/default/default'
@@ -252,7 +252,7 @@ def test_channel_filter():
     # get the cohort for fr-FR+fr
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     res = app.get(path)
-    assert res.json.get('cohort') == 'foobaz', res.json
+    assert res.json.get('cohort') == 'fooBaz', res.json
 
     # if the channel is not listed, we should bypass the foo cohort
     path = '/1/firefox/39/alpha/fr-FR/fr/default/default'
@@ -268,7 +268,7 @@ def test_version_filter():
     # get the cohort for fr-FR+fr
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
     res = app.get(path)
-    assert res.json.get('cohort') == 'foobaz', res.json
+    assert res.json.get('cohort') == 'fooBaz', res.json
 
     # if the version is < 39, we should bypass the foo cohort
     path = '/1/firefox/38/beta/fr-FR/fr/default/default'
