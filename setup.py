@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 from absearch import __version__
 
-install_requires = ['gevent==1.0.2',
-                    'boto==2.38.0',
+install_requires = ['gevent==1.1rc3',
+                    'boto==2.39.0',
                     'bottle==0.12.8',
                     'jsonschema==2.5.1',
                     'redis==2.10.3',
