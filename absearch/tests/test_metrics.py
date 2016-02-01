@@ -80,10 +80,9 @@ def test_enrolled():
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + cohort
     res = app.get(path)
 
-    assert stats.counters['refresh'] == 1
+    assert stats.counters['refreshed'] == 1
 
-    # also, an unexistant cohort should fall back to the default
-    # and count as a discard as well
+    # also, an unexistant cohort should be counted as a discard
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default/meh'
     app.get(path)
     assert stats.counters['discarded'] == 1
