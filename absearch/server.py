@@ -10,6 +10,7 @@ import hashlib
 from konfig import Config
 from bottle import Bottle, HTTPError
 from statsd import StatsClient
+from datadog import initialize, statsd
 from raven import Client as Sentry
 
 from absearch import __version__
@@ -37,6 +38,34 @@ gevent.signal(signal.SIGTERM, close)
 gevent.signal(signal.SIGINT, close)
 
 
+class _Statsd(object):
+    def __init__(self, config):
+        if config.get('datadog', True):
+            initialize(statsd_host=config['host'],
+                       statsd_port=config['port'],
+                       prefix=config['prefix'])
+            self.datadog = True
+            self._statsd = statsd
+        else:
+            self.datadog = False
+            self._statsd = StatsClient(config['host'],
+                                       config['port'],
+                                       config['prefix'])
+
+    def incr(self, metric, count=1, rate=1, **kw):
+        if self.datadog:
+            return self._statsd.increment(metric, value=count,
+                                          sample_rate=rate, **kw)
+        else:
+            return self._statsd.incr(metric, count=count, rate=rate)
+
+    def timer(self, metric, rate=1, **kw):
+        if self.datadog:
+            return self._statsd.timed(metric, sample_rate=rate, **kw)
+        else:
+            return self._statsd.timer(metric, rate=rate)
+
+
 def initialize_app(config):
     app._config_file = config
     app._config = Config(config)
@@ -45,9 +74,7 @@ def initialize_app(config):
     logging.config.fileConfig(config)
 
     # statsd configuration
-    app._statsd = StatsClient(app._config['statsd']['host'],
-                              app._config['statsd']['port'],
-                              prefix=app._config['statsd']['prefix'])
+    app._statsd = _Statsd(app._config['statsd'])
 
     # sentry configuration
     if app._config['sentry']['enabled']:
@@ -142,9 +169,11 @@ def add_user_to_cohort(**kw):
             raise HTTPError(status=404)
 
         cohort = res.get('cohort', 'default')
-        cohort = '.'.join(['cohorts', kw['locale'],
-                           kw['territory'], cohort])
-        app._statsd.incr(cohort)
+        if cohort != 'default':
+            locale = kw['locale']
+            territory = kw['territory']
+            cohort = '.'.join([locale, territory, cohort])
+            app._statsd.incr('enrolled', tags=[cohort])
         return res
 
 
@@ -152,7 +181,26 @@ def add_user_to_cohort(**kw):
 def get_cohort_settings(**kw):
     with app._statsd.timer('get_cohort_settings'):
         try:
-            return app.settings.get(**kw)
+            asked_cohort = kw['cohort']
+            res = app.settings.get(**kw)
+            if asked_cohort == 'default':
+                return res
+
+            cohort = res.get('cohort', 'default')
+            locale = kw['locale']
+            territory = kw['territory']
+            asked_cohort = '.'.join([locale, territory, asked_cohort])
+            cohort = '.'.join([locale, territory, cohort])
+
+            if asked_cohort != cohort:
+                # we're getting discarded
+                app._statsd.incr('discarded', tags=[asked_cohort])
+            else:
+                # we're getting back the cohort settings
+                app._statsd.incr('refreshed', tags=[asked_cohort])
+
+            return res
+
         except ValueError:
             raise HTTPError(status=404)
 

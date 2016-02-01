@@ -33,7 +33,8 @@
         "tests": {
           "fooBaz": {
             "settings": {
-              "searchDefault": "Google"
+              "searchDefault": "Google",
+              "extra": "key"
             },
             "filters": {
               "sampleRate": 100,

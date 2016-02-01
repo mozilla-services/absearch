@@ -35,6 +35,8 @@ def run_redis():
 
 _P = []
 test_config = os.path.join(os.path.dirname(__file__), 'absearch.ini')
+test_config_no_datadog = os.path.join(os.path.dirname(__file__),
+                                      'absearch-nodatadog.ini')
 
 
 def runServers():
@@ -87,10 +89,13 @@ def stopServers():
     _P[:] = []
 
 
-def get_app():
+def get_app(datadog=True):
     # create the web app
     server.app.debug = True
-    server.initialize_app(test_config)
+    if datadog:
+        server.initialize_app(test_config)
+    else:
+        server.initialize_app(test_config_no_datadog)
     server.app.catchall = False
     return TestApp(server.app)
 
