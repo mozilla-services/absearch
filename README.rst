@@ -65,7 +65,7 @@ The following metrics are produced by the app in statsd:
 +------------------------------+---------+------------------------------------------+
 | absearch.discarded           | counter | on every cohort discard (*) (**)         |
 +------------------------------+---------+------------------------------------------+
-| absearch.refresh             | counter | on every call to get cohort settings (*) |
+| absearch.refreshed           | counter | on every call to get cohort settings (*) |
 +------------------------------+---------+------------------------------------------+
 | absearch.get_cohort_settings | timer   | on every GET to get back cohort settings |
 +------------------------------+---------+------------------------------------------+

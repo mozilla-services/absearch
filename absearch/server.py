@@ -197,7 +197,7 @@ def get_cohort_settings(**kw):
                 app._statsd.incr('discarded', tags=[asked_cohort])
             else:
                 # we're getting back the cohort settings
-                app._statsd.incr('refresh', tags=[asked_cohort])
+                app._statsd.incr('refreshed', tags=[asked_cohort])
 
             return res
 
