@@ -1,4 +1,3 @@
-import statsd
 import time
 from collections import defaultdict
 from contextlib import contextmanager
@@ -7,9 +6,10 @@ from absearch import server
 
 
 class FakeStatsd(object):
-    def __init__(self, host, port, prefix):
+    def __init__(self, config):
         self.counters = defaultdict(int)
         self.timers = defaultdict(list)
+        self.datadog = True
 
     @contextmanager
     def timer(self, name):
@@ -17,20 +17,19 @@ class FakeStatsd(object):
         yield
         self.timers[name].append(time.time()-start)
 
-    def incr(self, name, value=1):
+    def incr(self, name, value=1, **kw):
         self.counters[name] += value
 
 
-statsd.StatsClient = FakeStatsd
-server.StatsClient = FakeStatsd
-
-
 def setUp():
+    server._old_Statsd = server._Statsd
+    server._Statsd = FakeStatsd
     runServers()
 
 
 def tearDown():
     stopServers()
+    server._Statsd = server._old_Statsd
 
 
 def test_metrics():
@@ -48,7 +47,7 @@ def test_metrics():
     stats = app.app._statsd
 
     # we got one cohort counter
-    assert stats.counters['cohorts.en-US.US.default'] == 1
+    assert stats.counters['enrolled'] == 0
 
     # we called add_user_to_cohort once
     assert len(stats.timers['add_user_to_cohort']), 1
@@ -58,3 +57,33 @@ def test_metrics():
 
     # we incremented on redis the counter for the default cohort
     assert len(stats.timers['redis.incr']) == 1
+
+
+def test_enrolled():
+    app = get_app()
+    stats = app.app._statsd
+
+    # get a cohort
+    cohort = 'default'
+    while cohort == 'default':
+        path = '/1/firefox/39/beta/cs-CZ/cz/default/default'
+        res = app.get(path)
+        cohort = res.json.get('cohort', 'default')
+
+    # we got one cohort counter
+    assert stats.counters['enrolled'] == 1
+
+    # we called add_user_to_cohort once
+    assert len(stats.timers['add_user_to_cohort']), 1
+
+    # now that we have a cohort let's check back the settings
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/' + cohort
+    res = app.get(path)
+
+    assert stats.counters['refresh'] == 1
+
+    # also, an unexistant cohort should fall back to the default
+    # and count as a discard as well
+    path = '/1/firefox/39/beta/cs-CZ/cz/default/default/meh'
+    app.get(path)
+    assert stats.counters['discarded'] == 1

@@ -21,6 +21,7 @@ def test_get_set_s3_file():
         @contextmanager
         def timer(self, name):
             yield
+        timed = timer
 
     stats = Stats()
     config = Config(test_config)

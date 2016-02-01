@@ -79,9 +79,17 @@ def test_weird_locale_name():
     assert res.json['settings']['searchDefault'] in wanted
 
 
-def test_set_cohort2():
-    app = get_app()
+def test_set_cohort2_statsd():
+    app = get_app(datadog=False)
+    return _test_set_cohort2(app)
 
+
+def test_set_cohort2_datadog():
+    app = get_app()
+    return _test_set_cohort2(app)
+
+
+def _test_set_cohort2(app):
     # get a cohort
     path = '/1/firefox/39/beta/cs-CZ/cz/default/default'
     res = app.get(path)

@@ -8,6 +8,7 @@ install_requires = ['gevent==1.1rc3',
                     'redis==2.10.3',
                     'konfig==0.9',
                     'statsd==3.1',
+                    'datadog==0.10.0',
                     'raven==5.3.1']
 
 classifiers = ["Programming Language :: Python",
