@@ -32,6 +32,9 @@
       "enum": ["Yahoo", "Yahoo 搜尋", "Google", "Bing", "DDG",
                "Google1", "Google2", "Google3", "GoogleD"]
     },
+    "optionBEnumRef": {
+      "enum": ["fooBaz", "Baz"]
+    },
     "defaultSettingsRef": {
       "type": "object",
       "properties": {
@@ -40,7 +43,13 @@
           "properties": {
             "searchDefault": {
               "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+            },
+            "optionB": {
+              "type": "array",
+              "items": {"$ref": "http://jsonschema.net#/definitions/optionBEnumRef" },
+              "uniqueItems": true
             }
+
           }
         }
       }
@@ -57,6 +66,11 @@
               "properties": {
                 "searchDefault": {
                   "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+                },
+                "optionB": {
+                  "type": "array",
+                  "items": {"$ref": "http://jsonschema.net#/definitions/optionBEnumRef" },
+                  "uniqueItems": true
                 }
               }
             },
