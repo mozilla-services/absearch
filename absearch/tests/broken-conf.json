@@ -1,0 +1,191 @@
+{
+  "v": 1,
+  "defaultInterval": 31536000,
+  "excludedDistributionIDPrefixes": [
+    "a",
+    "b",
+    "c"
+  ],
+  "locales": {
+    "en-US": {
+      "US": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Yahoo",
+            "optionB": ["foobAz", "Baz"]
+          },
+          "interval": 31536000
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+    "fr-FR": {
+      "FR": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google"
+          },
+          "interval": 31536000
+        },
+        "tests": {
+          "fooBaz": {
+            "settings": {
+              "searchDefault": "Google",
+              "extra": "key"
+            },
+            "filters": {
+              "sampleRate": 100,
+              "maxSize": 3,
+              "products": ["firefox"],
+              "channels": ["beta", "release"],
+              "minVersion": 39
+            }
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "GoogleD"
+        }
+      }
+    },
+    "de-DE": {
+      "DE": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google"
+          },
+          "interval": 31536000
+        },
+        "tests": {
+          "one": {
+            "settings": {
+              "searchDefault": "Yahoo"
+            },
+            "filters": {
+              "sampleRate": 1
+            }
+          },
+          "two": {
+            "settings": {
+              "searchDefault": "DDG",
+              "whatever": 1,
+              "we": "want here"
+            },
+            "filters": {
+              "sampleRate": 1
+            }
+          },
+          "three": {
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "filters": {
+              "sampleRate": 1
+            }
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
+    "fr-BE": {
+      "BE": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google1"
+          }
+        },
+        "tests": {
+          "foo23542": {
+            "settings": {
+              "searchDefault": "Google2"
+            },
+            "filters": {
+              "sampleRate": 100,
+              "maxSize": 10000,
+              "startTime": 1567824567
+            },
+            "interval": 2592000
+          },
+          "bar34234": {
+            "settings": {
+              "searchDefault": "Google3"
+            },
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000
+            },
+            "interval": 2592000
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
+    "cs": {
+      "CZ": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google1"
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    },
+
+    "cs-CZ": {
+      "CZ": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Google1"
+          }
+        },
+        "tests": {
+          "foo23542": {
+            "settings": {
+              "searchDefault": "Google2"
+            },
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000,
+              "startTime": 1434362310
+            },
+            "interval": 2592000
+          },
+          "bar34234": {
+            "settings": {
+              "searchDefault": "Google3"
+            },
+            "filters": {
+              "sampleRate": 1,
+              "maxSize": 10000
+            },
+            "interval": 2592000
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
+    }
+  }
+}
