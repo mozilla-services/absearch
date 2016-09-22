@@ -146,7 +146,8 @@ class SearchSettings(object):
             ver = int(ver.split('.')[0])
         except ValueError:
             raise ValueError("Bad version")
-        channel = _lower(channel)
+        # Allow for prerelease channels (release-cdntest, beta-cdntest)
+        channel = _lower(channel).split('-')[0]
         dist = _lower(dist)
         distver = _lower(distver)
 
