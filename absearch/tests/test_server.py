@@ -267,6 +267,16 @@ def test_channel_filter():
     res = app.get(path)
     assert 'cohort' not in res.json, res.json
 
+    # cdntest should map to regular channel
+    path = '/1/firefox/39/beta-cdntest/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert res.json.get('cohort') == 'fooBaz', res.json
+
+    # localtest should map to regular channel
+    path = '/1/firefox/39/release-localtest/fr-FR/fr/default/default'
+    res = app.get(path)
+    assert res.json.get('cohort') == 'fooBaz', res.json
+
 
 def test_version_filter():
     flush_redis()
