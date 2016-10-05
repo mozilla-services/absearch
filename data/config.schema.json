@@ -76,7 +76,9 @@
               "type": "object",
               "required" : ["sampleRate"],
               "properties": {
-                "sampleRate": { "type": "integer", "minimum": 1 }
+                "sampleRate": { "type": "integer", "minimum": 1, "maximum": 100 },
+                "maxSize": { "type": "integer", "minimum": 1 },
+                "startTime": { "type": "integer" }
               }
             }
           }
