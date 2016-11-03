@@ -8,7 +8,7 @@ import gevent
 import hashlib
 
 from konfig import Config
-from bottle import Bottle, HTTPError
+from bottle import Bottle, HTTPError, template, TEMPLATE_PATH, request
 from statsd import StatsClient
 from datadog import initialize, statsd
 from raven import Client as Sentry
@@ -19,6 +19,8 @@ from absearch.aws import get_s3_file
 from absearch import logger
 
 
+TPL_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+TEMPLATE_PATH.insert(0, TPL_DIR)
 app = Bottle()
 
 
@@ -203,6 +205,17 @@ def get_cohort_settings(**kw):
 
         except ValueError:
             raise HTTPError(status=404)
+
+
+@app.route('/__api__')
+def get_swagger(**kw):
+    host = request.headers.get('X-Forwarded-Host')
+    if host is None:
+        host = request.headers.get('Host', 'localhost')
+
+    scheme = request.headers.get('X-Forwarded-Proto', 'https')
+    options = {'HOST': host, 'VERSION': __version__, 'SCHEME': scheme}
+    return template('swagger', **options)
 
 
 def main(args=None):

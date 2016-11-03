@@ -5,6 +5,8 @@ import json
 import time
 import sys
 
+from swagger_parser import SwaggerParser
+import yaml
 import gevent
 
 from absearch import __version__
@@ -28,6 +30,29 @@ def test_info():
     # test the APIs
     info = app.get('/__info__').json
     assert info['version'] == __version__
+
+
+def test_swagger():
+    app = get_app()
+    # test the APIs
+    res = app.get('/__api__')
+
+    # make sure it's compliant
+    parser = SwaggerParser(swagger_dict=yaml.load(res.body))
+    spec = parser.specification
+
+    assert spec['info']['version'] == __version__
+    assert spec['schemes'] == ['https']
+    assert spec['host'] == 'localhost:80'
+
+    # now testing that every GET endpoint is present
+    for path, items in spec['paths'].items():
+        for verb, options in items.items():
+            verb = verb.upper()
+            if verb != 'GET':
+                continue
+            statuses = [int(st) for st in options['responses'].keys()]
+            res = app.get(path, status=statuses)
 
 
 def test_set_cohort():

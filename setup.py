@@ -11,6 +11,7 @@ install_requires = ['gevent==1.1rc3',
                     'datadog==0.10.0',
                     'raven==5.3.1']
 
+
 classifiers = ["Programming Language :: Python",
                "License :: OSI Approved :: Apache Software License",
                "Development Status :: 1 - Planning"]
