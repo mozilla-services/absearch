@@ -6,6 +6,7 @@ import bisect
 import string
 from string import ascii_lowercase, ascii_uppercase, digits
 import copy
+import re
 
 from jsonschema import validate
 
@@ -31,6 +32,7 @@ def accumulate(iterable):
 _O = ascii_uppercase + ascii_lowercase + digits + '.-'
 _S = ascii_lowercase + ascii_lowercase + digits + '.-'
 _TAB = string.maketrans(_O, _S)
+_REMOVE_PRERELEASE_SUFFIX = re.compile("(?:\-cdntest|\-localtest)$")
 
 
 def _lower(s):
@@ -147,6 +149,8 @@ class SearchSettings(object):
         except ValueError:
             raise ValueError("Bad version")
         channel = _lower(channel)
+        # Allow for prerelease channels (release-localtest, beta-cdntest)
+        channel = _REMOVE_PRERELEASE_SUFFIX.sub('', channel)
         dist = _lower(dist)
         distver = _lower(distver)
 
