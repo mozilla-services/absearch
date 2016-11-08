@@ -52,8 +52,7 @@ def test_swagger():
     # now testing that every GET endpoint is present
     for path, items in spec['paths'].items():
         for verb, options in items.items():
-            verb = verb.upper()
-            if verb != 'GET':
+            if verb.upper() != 'GET':
                 continue
             statuses = [int(st) for st in options['responses'].keys()
                         if st != '404']
