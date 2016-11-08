@@ -147,6 +147,8 @@ class SearchSettings(object):
         except ValueError:
             raise ValueError("Bad version")
         channel = _lower(channel)
+        # Allow for prerelease channels (release-localtest, beta-cdntest)
+        channel = channel.replace('-cdntest', '').replace('-localtest', '')
         dist = _lower(dist)
         distver = _lower(distver)
 
