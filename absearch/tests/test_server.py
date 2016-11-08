@@ -45,14 +45,19 @@ def test_swagger():
     assert spec['schemes'] == ['https']
     assert spec['host'] == 'localhost:80'
 
+    _values = {'prod': 'firefox', 'channel': 'beta', 'locale': 'fr',
+               'territory': 'fr', 'dist': 'dist', 'distver': 'distver',
+               'cohort': 'default', 'ver': '34'}
+
     # now testing that every GET endpoint is present
     for path, items in spec['paths'].items():
         for verb, options in items.items():
             verb = verb.upper()
             if verb != 'GET':
                 continue
-            statuses = [int(st) for st in options['responses'].keys()]
-            res = app.get(path, status=statuses)
+            statuses = [int(st) for st in options['responses'].keys()
+                        if st != '404']
+            app.get(path.format(**_values), status=statuses)
 
 
 def test_set_cohort():
