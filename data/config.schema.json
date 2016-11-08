@@ -1,24 +1,21 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://jsonschema.net",
+  "id": "http://mozilla.com/schemas/absearch.json",
   "type": "object",
   "properties": {
     "v": {
-      "id": "http://json-schema.net/v",
       "type": "integer"
     },
     "excludedDistributionIDPrefixes": {
-      "id": "http://json-schema.net/excludedDistributionIDPrefixes",
       "type": "array"
     },
     "locales": {
-      "id": "http://json-schema.net/locales",
       "type": "object",
       "properties": {
-        "en-US": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
-        "fr-FR": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
-        "de-DE": { "$ref": "http://jsonschema.net#/definitions/localeRef" },
-        "cs-CZ": { "$ref": "http://jsonschema.net#/definitions/localeRef" }
+        "en-US": { "$ref": "#/definitions/localeRef" },
+        "fr-FR": { "$ref": "#/definitions/localeRef" },
+        "de-DE": { "$ref": "#/definitions/localeRef" },
+        "cs-CZ": { "$ref": "#/definitions/localeRef" }
       }
     }
   },
@@ -42,11 +39,11 @@
           "type": "object",
           "properties": {
             "searchDefault": {
-              "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+              "$ref": "#/definitions/searchEngineEnumRef"
             },
             "optionB": {
               "type": "array",
-              "items": {"$ref": "http://jsonschema.net#/definitions/optionBEnumRef" },
+              "items": {"$ref": "#/definitions/optionBEnumRef" },
               "uniqueItems": true
             }
 
@@ -65,11 +62,11 @@
               "type": "object",
               "properties": {
                 "searchDefault": {
-                  "$ref": "http://jsonschema.net#/definitions/searchEngineEnumRef"
+                  "$ref": "#/definitions/searchEngineEnumRef"
                 },
                 "optionB": {
                   "type": "array",
-                  "items": {"$ref": "http://jsonschema.net#/definitions/optionBEnumRef" },
+                  "items": {"$ref": "#/definitions/optionBEnumRef" },
                   "uniqueItems": true
                 }
               }
@@ -79,7 +76,9 @@
               "type": "object",
               "required" : ["sampleRate"],
               "properties": {
-                "sampleRate": { "type": "integer", "minimum": 1 }
+                "sampleRate": { "type": "integer", "minimum": 1, "maximum": 100 },
+                "maxSize": { "type": "integer", "minimum": 1 },
+                "startTime": { "type": "integer" }
               }
             }
           }
@@ -93,13 +92,13 @@
         "^.*$": {
           "type": "object",
           "properties": {
-            "default": { "$ref": "http://jsonschema.net#/definitions/defaultSettingsRef" },
-            "tests": { "$ref": "http://jsonschema.net#/definitions/testRef" }
+            "default": { "$ref": "#/definitions/defaultSettingsRef" },
+            "tests": { "$ref": "#/definitions/testRef" }
           }
         }
       },
       "properties": {
-        "default": { "$ref": "http://jsonschema.net#/definitions/defaultSettingsRef" }
+        "default": { "$ref": "#/definitions/defaultSettingsRef" }
       }
     }
   }
