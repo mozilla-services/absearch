@@ -12,6 +12,7 @@ info:
   version: {{VERSION}}
   x-mozilla-services:
     homepage: https://github.com/mozilla-services/absearch
+    fullEndpointsDescription: true
 schemes:
     - {{SCHEME}}
 paths:
