@@ -178,6 +178,8 @@ class SearchSettings(object):
             res, picked_cohort = self._get_cohort(locale, territory, cohort)
             if picked_cohort != 'default':
                 res['cohort'] = picked_cohort
+            else:
+                res = self._pick_cohort(locale, territory, prod, ver, channel)
         else:
             # pick one
             res = self._pick_cohort(locale, territory, prod, ver, channel)
