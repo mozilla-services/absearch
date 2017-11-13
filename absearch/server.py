@@ -279,5 +279,7 @@ def main(args=None):
     initialize_app(config)
     abconf = app._config['absearch']
 
+    abconf['port'] = os.environ.get("PORT", str(abconf['port']))
+
     app.run(host=abconf['host'], port=abconf['port'],
             server=abconf['server'], debug=abconf['debug'])
