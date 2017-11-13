@@ -1,14 +1,19 @@
+import datetime
 import sys
 from functools import partial
 import os
 import json
+import logging
 import signal
+import time
 import logging.config
 import gevent
 import hashlib
 
 from konfig import Config
-from bottle import Bottle, HTTPError, template, TEMPLATE_PATH, request
+from bottle import (
+    Bottle, HTTPError, template, TEMPLATE_PATH, request, response, hook)
+from dockerflow.version import get_version
 from statsd import StatsClient
 from datadog import initialize, statsd
 from raven import Client as Sentry
@@ -18,6 +23,8 @@ from absearch.settings import SearchSettings
 from absearch.aws import get_s3_file
 from absearch import logger
 
+
+summary_logger = logging.getLogger('request.summary')
 
 TPL_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 TEMPLATE_PATH.insert(0, TPL_DIR)
@@ -118,6 +125,32 @@ def initialize_app(config):
     max_age = app._config['absearch']['max_age']
     app.settings = SearchSettings(config_reader, schema_reader, counter,
                                   counter_options, max_age)
+
+
+@hook('before_request')
+def request_summary_before():
+    request._received_at = time.time()
+    request._summary_log = {
+        'agent': request.headers.get('User-Agent'),
+        'lang': request.headers.get('Accept-Language'),
+        'path': request.path,
+        'method': request.method,
+        'querystring': request.GET,
+        'errno': 0
+    }
+
+
+@hook('after_request')
+def request_summary_after():
+    current = time.time()
+    duration = current - request._received_at
+    isotimestamp = datetime.fromtimestamp(current).isoformat()
+    request._summary_log.update({
+        'time': isotimestamp,
+        'code': response.status_code,
+        't': duration
+    })
+    summary_logger.info('', extra=request._summary_log)
 
 
 @app.route('/')
@@ -228,6 +261,10 @@ def main(args=None):
     else:
         config = os.path.join(os.path.dirname(__file__), '..', 'config',
                               'absearch.ini')
+
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO)
+    summary_logger.addHandler(handler)
 
     initialize_app(config)
     abconf = app._config['absearch']
