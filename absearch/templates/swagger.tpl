@@ -34,6 +34,32 @@ paths:
         responses:
           '200':
             description: Info returned.
+    /__lbheartbeat__:
+      get:
+        summary: "Is the server reachable?"
+        operationId: "lbheartbeat"
+        produces:
+        - "application/json"
+        responses:
+          "200":
+            description: "Server reachable"
+            schema:
+              type: "object"
+        tags:
+        - Utilities
+    /__version__:
+      get:
+        summary: "Running instance version information"
+        operationId: "version"
+        produces:
+        - "application/json"
+        responses:
+          "200":
+            description: "Return the running instance version information"
+            schema:
+              type: "object"
+        tags:
+        - Utilities
     /__heartbeat__:
       get:
         operationId: getHeartbeat

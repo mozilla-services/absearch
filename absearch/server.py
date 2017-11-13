@@ -179,6 +179,16 @@ def hb():
             'schema_md5': app.settings.schema_md5}
 
 
+@app.route('/__lbheartbeat__')
+def lbhb():
+    return {}
+
+
+@app.route('/__version__')
+def version():
+    return get_version('.')
+
+
 @app.route('/__info__')
 def info():
     return {'version': __version__}

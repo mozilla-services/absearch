@@ -362,6 +362,13 @@ def test_hb():
     assert 'config_md5' in res.json, res.json
 
 
+def test_lbhb():
+    app = get_app()
+    res = app.get('/__lbheartbeat__')
+
+    assert res.status_code == 200
+
+
 def test_root():
     app = get_app()
     res = app.get('/')
