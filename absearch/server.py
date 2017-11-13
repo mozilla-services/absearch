@@ -150,6 +150,7 @@ def hb():
 def info():
     return {'version': __version__}
 
+
 PATH = '/1/<prod>/<ver>/<channel>/<locale>/<territory>/<dist>/<distver>'
 
 
