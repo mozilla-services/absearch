@@ -13,6 +13,7 @@ from jsonschema import validate
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
 from absearch.exceptions import ReadError
 
+from distutils.version import LooseVersion, StrictVersion
 
 DEFAULT_INTERVAL = 3600 * 24
 
@@ -118,8 +119,6 @@ class SearchSettings(object):
                                                filters.get('products', [])]
                         filters['channels'] = [_lower(c) for c in
                                                filters.get('channels', [])]
-                        filters['minVersion'] = int(filters.get('minVersion',
-                                                                -1))
                         tests[name] = test
 
                 self._locales[locale, territory] = default, tests
@@ -144,10 +143,6 @@ class SearchSettings(object):
         locale = _lower(locale)
         territory = _lower(territory)
         prod = _lower(prod)
-        try:
-            ver = int(ver.split('.')[0])
-        except ValueError:
-            raise ValueError("Bad version")
         channel = _lower(channel)
         # Allow for prerelease channels (release-localtest, beta-cdntest)
         channel = _REMOVE_PRERELEASE_SUFFIX.sub('', channel)
@@ -225,7 +220,7 @@ class SearchSettings(object):
         if len(filters['channels']) > 0 and channel not in filters['channels']:
             return True
 
-        if ver < filters['minVersion']:
+        if LooseVersion(ver) < LooseVersion(str(filters['minVersion'])):
             return True
 
         max = filters.get('maxSize')
