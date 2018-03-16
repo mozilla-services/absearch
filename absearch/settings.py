@@ -120,7 +120,8 @@ class SearchSettings(object):
                         filters['channels'] = [_lower(c) for c in
                                                filters.get('channels', [])]
                         # Use a very small version
-                        filters['minVersion'] = filters.get('minVersion', '0.1')
+                        filters['minVersion'] = filters.get('minVersion',
+                                                            '0.1')
                         tests[name] = test
 
                 self._locales[locale, territory] = default, tests
