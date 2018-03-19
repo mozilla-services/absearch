@@ -148,7 +148,7 @@ class SearchSettings(object):
         prod = _lower(prod)
         # verify version at least contains a number
         try:
-            int(ver)
+            int(ver.split('.')[0])
         except ValueError:
             raise ValueError("Bad version")
         channel = _lower(channel)
