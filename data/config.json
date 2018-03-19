@@ -185,6 +185,34 @@
           "searchDefault": "Google"
         }
       }
+    },
+    "en-GB": {
+      "GB": {
+        "default": {
+          "settings": {
+            "searchDefault":   "Yahoo"
+          },
+          "interval": 31536000
+        },
+        "tests": {
+          "esrTest": {
+            "settings": {
+              "searchDefault": "Google"
+            },
+            "filters": {
+              "sampleRate": 100,
+              "maxSize": 3,
+              "channels": ["esr"],
+              "minVersion": 39.2
+            }
+          }
+        }
+      },
+      "default": {
+        "settings": {
+          "searchDefault": "Google"
+        }
+      }
     }
   }
 }
