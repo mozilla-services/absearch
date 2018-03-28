@@ -5,5 +5,5 @@ try:
 except ImportError:     # pragma: no cover
     pass                # pragma: no cover
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 logger = logging.getLogger('absearch')
