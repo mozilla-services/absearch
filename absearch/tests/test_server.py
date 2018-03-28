@@ -473,3 +473,22 @@ def test_invalid_url():
     for url in ('/1/firefox/.*/release/.*/.*/default/default/web.xml',
                 '/1/firefox/.*/release/.*/.*/default/default'):
         app.get(url, status=404)
+
+
+def test_string_version():
+    app = get_app()
+
+    path = '/1/firefox/39.1/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Yahoo'}
+
+    path = '/1/firefox/39.2/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Google'}
+
+    path = '/1/firefox/39.3/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Google'}
