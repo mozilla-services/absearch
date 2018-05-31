@@ -475,7 +475,7 @@ def test_invalid_url():
         app.get(url, status=404)
 
 
-def test_string_version():
+def test_string_min_version():
     app = get_app()
 
     path = '/1/firefox/39.1/esr/en-GB/GB/default/default'
@@ -492,3 +492,22 @@ def test_string_version():
     res = app.get(path)
 
     assert res.json['settings'] == {'searchDefault': 'Google'}
+
+
+def test_string_max_version():
+    app = get_app()
+
+    path = '/1/firefox/45.3/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Google'}
+
+    path = '/1/firefox/45.4/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Google'}
+
+    path = '/1/firefox/45.5/esr/en-GB/GB/default/default'
+    res = app.get(path)
+
+    assert res.json['settings'] == {'searchDefault': 'Yahoo'}

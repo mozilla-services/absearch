@@ -122,6 +122,9 @@ class SearchSettings(object):
                         # Use a very small version
                         filters['minVersion'] = filters.get('minVersion',
                                                             '0.1')
+                        # Use a very large version
+                        filters['maxVersion'] = filters.get('maxVersion',
+                                                            '1000.0')
                         tests[name] = test
 
                 self._locales[locale, territory] = default, tests
@@ -229,6 +232,9 @@ class SearchSettings(object):
             return True
 
         if LooseVersion(str(ver)) < LooseVersion(str(filters['minVersion'])):
+            return True
+
+        if LooseVersion(str(ver)) > LooseVersion(str(filters['maxVersion'])):
             return True
 
         max = filters.get('maxSize')
