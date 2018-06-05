@@ -201,7 +201,7 @@
             },
             "filters": {
               "sampleRate": 100,
-              "maxSize": 1000,
+              "maxSize": 3,
               "channels": ["esr"],
               "minVersion": 39.2,
               "maxVersion": 45.4
