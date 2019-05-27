@@ -1,7 +1,9 @@
 from setuptools import setup, find_packages
 from absearch import __version__
 
-install_requires = ['gevent==1.1rc3',
+# gevent version should match docker container distributions
+# package version
+install_requires = ['gevent==1.1.2',
                     'boto==2.49',
                     'bottle==0.12.8',
                     'jsonschema==3.0.1',
