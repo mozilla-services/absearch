@@ -38,7 +38,8 @@ def test_swagger():
     res = app.get('/__api__')
 
     # make sure it's compliant
-    parser = SwaggerParser(swagger_dict=yaml.load(res.body, Loader=yaml.FullLoader))
+    swagger_dict = yaml.load(res.body, Loader=yaml.FullLoader)
+    parser = SwaggerParser(swagger_dict=swagger_dict)
     spec = parser.specification
 
     assert spec['info']['version'] == __version__

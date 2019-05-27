@@ -33,7 +33,7 @@ def accumulate(iterable):
 _O = ascii_uppercase + ascii_lowercase + digits + '.-'
 _S = ascii_lowercase + ascii_lowercase + digits + '.-'
 _TAB = string.maketrans(_O, _S)
-_REMOVE_PRERELEASE_SUFFIX = re.compile("(?:\-cdntest|\-localtest)$")
+_REMOVE_PRERELEASE_SUFFIX = re.compile(r"(?:\-cdntest|\-localtest)$")
 
 
 def _lower(s):
@@ -222,8 +222,8 @@ class SearchSettings(object):
                      filters):
         start_time = filters.get('startTime')
         if start_time and start_time >= time.time():
-                # not active yet
-                return True
+            # not active yet
+            return True
 
         if len(filters['products']) > 0 and prod not in filters['products']:
             return True

@@ -24,7 +24,10 @@ jobs:
           command: docker build -t app:build .
       - run:
           name: Test Nose
-          command: docker run -it --user root app:build test
+          command: docker run -it --user root app:build nosetest
+      - run:
+          name: Flake8
+          command: docker run -it --user root app:build flake8
 
           # uncomment when ops can set up credentials
           #- run:
