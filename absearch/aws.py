@@ -32,6 +32,8 @@ def _get_connector(config, use_cache=False):
         is_secure = config['aws']['is_secure']
         if 'host' in config['aws']:
             conn = boto.connect_s3(is_secure=is_secure,
+                                   aws_access_key_id="fake",
+                                   aws_secret_access_key="fake",
                                    port=config['aws']['port'],
                                    host=config['aws']['host'],
                                    **kw)
