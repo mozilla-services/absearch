@@ -18,9 +18,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /root/.cache
 
-# run the server with the baked in default configuration
-# volume mount over /app/config/absearch.ini to over-ride the
-# configuration
 ENTRYPOINT ["/app/scripts/run.sh"]
 CMD ["server"]
 
