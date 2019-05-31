@@ -29,19 +29,19 @@ jobs:
           name: Flake8
           command: docker run -it --user root app:build flake8
 
-          # uncomment when ops can set up credentials
-          #- run:
-          #- runame: Push to Dockerhub
-          #- rucommand: |
-          #- ru  if [ "${CIRCLE_BRANCH}" == "master" ]; then
-          #- ru    scripts/deploy-dockerhub.sh latest
-          #- ru  fi
-          #- ru  if [[ "${CIRCLE_BRANCH}" == feature* ]] || [[ "${CIRCLE_BRANCH}" == dockerpush* ]]; then
-          #- ru    scripts/deploy-dockerhub.sh "$CIRCLE_BRANCH"
-          #- ru  fi
-          #- ru  if [ -n "${CIRCLE_TAG}" ]; then
-          #- ru    scripts/deploy-dockerhub.sh "$CIRCLE_TAG"
-          #- ru  fi
+      - run:
+          name: Push to Dockerhub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              scripts/deploy-dockerhub.sh latest
+            fi
+            if [[ "${CIRCLE_BRANCH}" == feature* ]] || [[ "${CIRCLE_BRANCH}" == dockerpush* ]]; then
+              scripts/deploy-dockerhub.sh "$CIRCLE_BRANCH"
+            fi
+            if [ -n "${CIRCLE_TAG}" ]; then
+              scripts/deploy-dockerhub.sh "$CIRCLE_TAG"
+            fi
+
 workflows:
   version: 2
 
