@@ -156,6 +156,18 @@ def info():
     return {'version': __version__}
 
 
+_cached_version = None
+
+
+@app.route('/__version__')
+def version():
+    global _cached_version
+    if _cached_version is None:
+        path = os.getenv("VERSION_FILE", "./version.json")
+        _cached_version = json.load(open(path, "r"))
+    return _cached_version
+
+
 PATH = '/1/<prod>/<ver>/<channel>/<locale>/<territory>/<dist>/<distver>'
 
 

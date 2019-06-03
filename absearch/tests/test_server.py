@@ -40,6 +40,26 @@ def test_info():
     assert info['version'] == __version__
 
 
+def test_version():
+    app = get_app()
+
+    try:
+        os.remove("./version.json")
+    except OSError:
+        pass
+
+    try:
+        app.get('/__version__')
+        assert False, "should crash if version.json is missing."
+    except IOError:
+        pass
+
+    json.dump({'project': 'absearch'}, open('./version.json', 'w'))
+
+    version = app.get('/__version__').json
+    assert version['project'] == 'absearch'
+
+
 def test_swagger():
     app = get_app()
     # test the APIs
