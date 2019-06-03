@@ -129,6 +129,11 @@ def root():
     return {'description': desc}
 
 
+@app.route('/__lbheartbeat__')
+def lhb():
+    return {}
+
+
 @app.route('/__heartbeat__')
 def hb():
     # doing a realistic code, but triggering a S3 call as well

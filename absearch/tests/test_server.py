@@ -24,6 +24,14 @@ def tearDown():
     stopServers()
 
 
+def test_lbheartbeat():
+    app = get_app()
+
+    # test the APIs
+    resp = app.get('/__lbheartbeat__')
+    assert resp.status_code == 200
+
+
 def test_info():
     app = get_app()
 
