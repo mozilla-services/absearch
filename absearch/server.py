@@ -69,11 +69,12 @@ class _Statsd(object):
 
 
 def initialize_app(config):
+    # logging configuration
+    logging.config.fileConfig(config, disable_existing_loggers=False)
+    logger.info("Read configuration from %r" % config)
+
     app._config_file = config
     app._config = Config(config)
-
-    # logging configuration
-    logging.config.fileConfig(config)
 
     # statsd configuration
     app._statsd = _Statsd(app._config['statsd'])
@@ -89,6 +90,7 @@ def initialize_app(config):
     schemafile = app._config['absearch']['schema']
 
     if app._config['absearch']['backend'] == 'aws':
+        logger.info("Read config and schema from AWS")
         config_reader = partial(get_s3_file, configfile, app._config,
                                 app._statsd)
         schema_reader = partial(get_s3_file, schemafile, app._config,
@@ -96,6 +98,7 @@ def initialize_app(config):
     else:
         # directory
         datadir = app._config['directory']['path']
+        logger.info("Read config and schema from %r on disk" % datadir)
 
         def config_reader():
             with open(os.path.join(datadir, configfile)) as f:
