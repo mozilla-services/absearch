@@ -10,6 +10,7 @@ import re
 
 from jsonschema import validate
 
+from absearch import logger
 from absearch.counters import MemoryCohortCounters, RedisCohortCounters
 from absearch.exceptions import ReadError
 
@@ -52,8 +53,10 @@ class SearchSettings(object):
         self._last_loaded = None
 
         if counter == 'memory':
+            logger.info("Use memory backend for counters")
             counters_backend = MemoryCohortCounters
         else:
+            logger.info("Use Redis backend for counters")
             counters_backend = RedisCohortCounters
 
         if counter_options is None:

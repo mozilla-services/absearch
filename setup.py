@@ -6,6 +6,7 @@ from absearch import __version__
 install_requires = ['gevent==1.1.2',
                     'boto==2.49',
                     'bottle==0.12.8',
+                    'dockerflow',
                     'jsonschema==3.0.1',
                     'redis==2.10.3',
                     'konfig==0.9',
