@@ -250,4 +250,5 @@ def main(args=None):
     abconf = app._config['absearch']
 
     app.run(host=abconf['host'], port=abconf['port'],
-            server=abconf['server'], debug=abconf['debug'])
+            server=abconf['server'], debug=abconf['debug'],
+            quiet=abconf.get('quiet', not abconf['debug']))
