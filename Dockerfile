@@ -15,7 +15,7 @@ RUN apt-get update && \
     apt-get install -y python-gevent && \
     pip install -U pip && \
     pip install -r requirements.txt && \
-    pip install -e . && \
+    pip install . && \
     apt-get -q --yes autoremove && \
     apt-get clean && \
     rm -rf /root/.cache
