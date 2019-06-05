@@ -3,16 +3,16 @@ from absearch import __version__
 
 # gevent version should match docker container distributions
 # package version
-install_requires = ['gevent==1.1.2',
-                    'boto==2.49',
-                    'bottle==0.12.8',
+install_requires = ['gevent',
+                    'boto',
+                    'bottle',
                     'dockerflow',
-                    'jsonschema==3.0.1',
-                    'redis==2.10.3',
-                    'konfig==0.9',
-                    'statsd==3.1',
-                    'datadog==0.10.0',
-                    'raven==5.3.1']
+                    'jsonschema',
+                    'redis',
+                    'konfig',
+                    'statsd',
+                    'datadog',
+                    'raven']
 
 
 classifiers = ["Programming Language :: Python",

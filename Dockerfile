@@ -13,7 +13,9 @@ COPY . /app
 # comes as a package (1.1.2)
 RUN apt-get update && \
     apt-get install -y python-gevent && \
-    python ./setup.py install && \
+    pip install -U pip && \
+    pip install -r requirements.txt && \
+    pip install . && \
     apt-get -q --yes autoremove && \
     apt-get clean && \
     rm -rf /root/.cache
