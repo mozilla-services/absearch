@@ -1,4 +1,5 @@
 import sys
+import datetime
 from functools import partial
 import os
 import json
@@ -8,7 +9,8 @@ import gevent
 import hashlib
 
 from konfig import Config
-from bottle import Bottle, HTTPError, template, TEMPLATE_PATH, request
+from bottle import (
+    Bottle, HTTPError, template, TEMPLATE_PATH, request, response)
 from statsd import StatsClient
 from datadog import initialize, statsd
 from raven import Client as Sentry
@@ -22,6 +24,7 @@ from absearch import logger
 TPL_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 TEMPLATE_PATH.insert(0, TPL_DIR)
 app = Bottle()
+summary_logger = logging.getLogger("request.summary")
 
 
 def close():
@@ -68,12 +71,38 @@ class _Statsd(object):
             return self._statsd.timer(metric, rate=rate)
 
 
+def before_request():
+    request._received_at = datetime.datetime.now()
+
+
+def after_request():
+    isotimestamp = datetime.datetime.now().isoformat()
+    t_usec = (datetime.datetime.now() - request._received_at).microseconds
+    context = dict(
+        agent=request.headers.get("User-Agent"),
+        path=request.path,
+        method=request.method,
+        lang=request.headers.get("Accept-Language"),
+        code=response.status_code,
+        time=isotimestamp,
+        t=t_usec / 1000,  # msec
+    )
+    if request.GET:
+        context["qs"] = request.GET
+
+    summary_logger.info("", extra=context)
+
+
 def initialize_app(config):
+    # logging configuration
+    logging.config.fileConfig(config, disable_existing_loggers=False)
+    logger.info("Read configuration from %r" % config)
+
     app._config_file = config
     app._config = Config(config)
 
-    # logging configuration
-    logging.config.fileConfig(config)
+    app.add_hook('before_request', before_request)
+    app.add_hook('after_request', after_request)
 
     # statsd configuration
     app._statsd = _Statsd(app._config['statsd'])
@@ -89,6 +118,7 @@ def initialize_app(config):
     schemafile = app._config['absearch']['schema']
 
     if app._config['absearch']['backend'] == 'aws':
+        logger.info("Read config and schema from AWS")
         config_reader = partial(get_s3_file, configfile, app._config,
                                 app._statsd)
         schema_reader = partial(get_s3_file, schemafile, app._config,
@@ -96,6 +126,7 @@ def initialize_app(config):
     else:
         # directory
         datadir = app._config['directory']['path']
+        logger.info("Read config and schema from %r on disk" % datadir)
 
         def config_reader():
             with open(os.path.join(datadir, configfile)) as f:
@@ -129,6 +160,11 @@ def root():
     return {'description': desc}
 
 
+@app.route('/__lbheartbeat__')
+def lhb():
+    return {}
+
+
 @app.route('/__heartbeat__')
 def hb():
     # doing a realistic code, but triggering a S3 call as well
@@ -149,6 +185,18 @@ def hb():
 @app.route('/__info__')
 def info():
     return {'version': __version__}
+
+
+_cached_version = None
+
+
+@app.route('/__version__')
+def version():
+    global _cached_version
+    if _cached_version is None:
+        path = os.getenv("VERSION_FILE", "./version.json")
+        _cached_version = json.load(open(path, "r"))
+    return _cached_version
 
 
 PATH = '/1/<prod>/<ver>/<channel>/<locale>/<territory>/<dist>/<distver>'
@@ -233,4 +281,5 @@ def main(args=None):
     abconf = app._config['absearch']
 
     app.run(host=abconf['host'], port=abconf['port'],
-            server=abconf['server'], debug=abconf['debug'])
+            server=abconf['server'], debug=abconf['debug'],
+            quiet=abconf.get('quiet', not abconf['debug']))

@@ -89,7 +89,7 @@ def stopServers():
     _P[:] = []
 
 
-def get_app(datadog=True):
+def get_app(datadog=False):
     # create the web app
     server.app.debug = True
     if datadog:

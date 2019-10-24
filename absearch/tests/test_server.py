@@ -24,6 +24,14 @@ def tearDown():
     stopServers()
 
 
+def test_lbheartbeat():
+    app = get_app()
+
+    # test the APIs
+    resp = app.get('/__lbheartbeat__')
+    assert resp.status_code == 200
+
+
 def test_info():
     app = get_app()
 
@@ -32,13 +40,34 @@ def test_info():
     assert info['version'] == __version__
 
 
+def test_version():
+    app = get_app()
+
+    try:
+        os.remove("./version.json")
+    except OSError:
+        pass
+
+    try:
+        app.get('/__version__')
+        assert False, "should crash if version.json is missing."
+    except IOError:
+        pass
+
+    json.dump({'project': 'absearch'}, open('./version.json', 'w'))
+
+    version = app.get('/__version__').json
+    assert version['project'] == 'absearch'
+
+
 def test_swagger():
     app = get_app()
     # test the APIs
     res = app.get('/__api__')
 
     # make sure it's compliant
-    parser = SwaggerParser(swagger_dict=yaml.load(res.body))
+    swagger_dict = yaml.load(res.body, Loader=yaml.FullLoader)
+    parser = SwaggerParser(swagger_dict=swagger_dict)
     spec = parser.specification
 
     assert spec['info']['version'] == __version__

@@ -1,15 +1,18 @@
 from setuptools import setup, find_packages
 from absearch import __version__
 
-install_requires = ['gevent==1.1rc3',
-                    'boto==2.39.0',
-                    'bottle==0.12.8',
-                    'jsonschema==2.5.1',
-                    'redis==2.10.3',
-                    'konfig==0.9',
-                    'statsd==3.1',
-                    'datadog==0.10.0',
-                    'raven==5.3.1']
+# gevent version should match docker container distributions
+# package version
+install_requires = ['gevent',
+                    'boto',
+                    'bottle',
+                    'dockerflow',
+                    'jsonschema',
+                    'redis',
+                    'konfig',
+                    'statsd',
+                    'datadog',
+                    'raven']
 
 
 classifiers = ["Programming Language :: Python",
