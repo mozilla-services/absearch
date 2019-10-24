@@ -198,7 +198,7 @@ def test_pick_test_cohort_and_ask_again():
 def test_start_time():
     app = get_app()
     # bar34234 or default
-    # gets picked because foo23542 has not started yet
+    # gets picked because foo23542 has not started yet (starts in 2051)
     path = '/1/firefox/39/beta/fr-BE/BE/default/default'
     res = app.get(path).json
     assert res['settings']['searchDefault'] != 'Google2'
