@@ -4,4 +4,4 @@ nose
 nose-cov
 coverage
 moto==0.4.19
-swagger-parser==0.1.11
+swagger-parser==1.0.1
