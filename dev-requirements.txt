@@ -3,5 +3,5 @@ WebTest
 nose
 nose-cov
 coverage
-moto==0.4.19
+moto==1.3.13
 swagger-parser==1.0.1
