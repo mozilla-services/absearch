@@ -43,7 +43,6 @@ def test_aws_dies():
     # but also emit a warning
     app.get(path)
 
-    # and... redis is back!
     _P.insert(0, run_moto())
     time.sleep(.1)
 

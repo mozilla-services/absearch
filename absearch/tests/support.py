@@ -31,7 +31,7 @@ test_config_no_datadog = os.path.join(os.path.dirname(__file__),
 
 
 def runServers():
-    # run Moto & Redis
+    # run Moto
     _P.append(run_moto())
 
     time.sleep(.1)
