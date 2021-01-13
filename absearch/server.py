@@ -78,6 +78,7 @@ def before_request():
 def after_request():
     isotimestamp = datetime.datetime.now().isoformat()
     t_usec = (datetime.datetime.now() - request._received_at).microseconds
+    response.set_header("Cache-Control", "max-age=300")
     context = dict(
         agent=request.headers.get("User-Agent"),
         path=request.path,
