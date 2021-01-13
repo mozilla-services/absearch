@@ -7,13 +7,11 @@ from cStringIO import StringIO
 from contextlib import contextmanager
 import socket
 
-import redis
 from webtest import TestApp
 from konfig import Config
 
 from absearch import server
 from absearch.aws import _get_connector, set_s3_file
-from absearch.counters import RedisCohortCounters
 
 
 def run_moto():
@@ -21,13 +19,6 @@ def run_moto():
     args = [sys.executable, '-c',
             "from moto import server; server.main()",
             's3bucket_path']
-    return subprocess.Popen(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
-                            preexec_fn=os.setsid)
-
-
-def run_redis():
-    args = ['redis-server', '--port', '7777']
     return subprocess.Popen(args, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE,
                             preexec_fn=os.setsid)
@@ -42,7 +33,6 @@ test_config_no_datadog = os.path.join(os.path.dirname(__file__),
 def runServers():
     # run Moto & Redis
     _P.append(run_moto())
-    _P.append(run_redis())
 
     time.sleep(.1)
     populate_S3()
@@ -60,21 +50,6 @@ def populate_S3():
                   config['absearch']['schema']):
         filename = os.path.join(datadir, file_)
         set_s3_file(filename, config)
-
-    _redis = redis.StrictRedis(**dict(config['redis']))
-    _redis.flushdb()
-
-
-def flush_redis():
-    config = Config(test_config)
-    _redis = redis.StrictRedis(**dict(config['redis']))
-    _redis.flushdb()
-
-
-def dump_counters():
-    config = Config(test_config)
-    counters = RedisCohortCounters(**dict(config['redis']))
-    return counters.dump()
 
 
 def stopServers():
