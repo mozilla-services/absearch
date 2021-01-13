@@ -256,17 +256,6 @@ def get_cohort_settings(**kw):
             raise HTTPError(status=404)
 
 
-@app.route('/__api__')
-def get_swagger(**kw):
-    host = request.headers.get('X-Forwarded-Host')
-    if host is None:
-        host = request.headers.get('Host', 'localhost')
-
-    scheme = request.headers.get('X-Forwarded-Proto', 'https')
-    options = {'HOST': host, 'VERSION': __version__, 'SCHEME': scheme}
-    return template('swagger', **options)
-
-
 def main(args=None):
     if args is None:
         args = sys.argv[1:]
