@@ -1,6 +1,4 @@
-import sys
 from collections import defaultdict
-from konfig import Config
 
 
 class MemoryCohortCounters(object):
@@ -19,4 +17,3 @@ class MemoryCohortCounters(object):
 
     def decr(self, locale, territory, cohort):
         self._counters[self._key(locale, territory, cohort)] -= 1
-

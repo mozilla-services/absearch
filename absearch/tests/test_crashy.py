@@ -2,8 +2,8 @@ import os
 import time
 import signal
 
-from webtest import AppError
-from absearch.tests.support import (runServers, stopServers, get_app, _P, capture, run_moto)
+from absearch.tests.support import (runServers, stopServers, get_app, _P,
+                                    run_moto)
 
 
 def setUp():

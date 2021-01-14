@@ -1,7 +1,6 @@
-from konfig import Config
-from absearch.tests.support import (runServers, stopServers, test_config,
-                                    capture)
+from absearch.tests.support import (runServers, stopServers)
 from absearch.counters import MemoryCohortCounters
+
 
 def setUp():
     runServers()
@@ -20,4 +19,3 @@ def test_memory():
 
     value = counter.get('en-US', 'US', 'abc')
     assert value == 9, value
-
