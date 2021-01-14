@@ -140,10 +140,7 @@ def initialize_app(config):
 
     # counter configuration
     counter = app._config['absearch']['counter']
-    if counter == 'redis':
-        counter_options = dict(app._config['redis'])
-    else:
-        counter_options = {}
+    counter_options = {}
     counter_options['statsd'] = app._statsd
 
     max_age = app._config['absearch']['max_age']
