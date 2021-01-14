@@ -10,7 +10,6 @@ install_requires = ['gevent',
                     'jsonschema',
                     'konfig',
                     'statsd',
-                    'datadog',
                     'raven']
 
 

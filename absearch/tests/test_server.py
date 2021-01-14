@@ -114,7 +114,7 @@ def test_weird_locale_name():
 
 
 def test_set_cohort2_statsd():
-    app = get_app(datadog=False)
+    app = get_app()
     return _test_set_cohort2(app)
 
 
