@@ -27,6 +27,7 @@ def test_lbheartbeat():
 
     # test the APIs
     resp = app.get('/__lbheartbeat__')
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert resp.status_code == 200
 
 
@@ -34,7 +35,9 @@ def test_info():
     app = get_app()
 
     # test the APIs
-    info = app.get('/__info__').json
+    resp = app.get('/__info__')
+    info = resp.json
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert info['version'] == __version__
 
 
@@ -54,7 +57,9 @@ def test_version():
 
     json.dump({'project': 'absearch'}, open('./version.json', 'w'))
 
-    version = app.get('/__version__').json
+    resp = app.get('/__version__')
+    version = resp.json
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert version['project'] == 'absearch'
 
 
@@ -68,6 +73,7 @@ def test_set_cohort():
     assert 'cohort' not in res.json
     assert res.json['settings'] == {'searchDefault': 'Yahoo'}
     assert res.json['interval'] == 31536000
+    assert res.headers["Cache-Control"] == "max-age=300"
 
 
 def test_default_interval():
@@ -79,6 +85,7 @@ def test_default_interval():
     res = app.get(path)
     assert 'cohort' not in res.json
     assert res.json['interval'] == 31536000
+    assert res.headers["Cache-Control"] == "max-age=300"
 
 
 def test_just_3_keys():
