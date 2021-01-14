@@ -57,6 +57,7 @@ def test_version():
     version = app.get('/__version__').json
     assert version['project'] == 'absearch'
 
+
 def test_set_cohort():
     app = get_app()
 

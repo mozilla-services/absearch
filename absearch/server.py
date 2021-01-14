@@ -10,7 +10,7 @@ import hashlib
 
 from konfig import Config
 from bottle import (
-    Bottle, HTTPError, template, TEMPLATE_PATH, request, response)
+    Bottle, HTTPError, TEMPLATE_PATH, request, response)
 from statsd import StatsClient
 from datadog import initialize, statsd
 from raven import Client as Sentry
