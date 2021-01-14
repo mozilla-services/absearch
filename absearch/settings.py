@@ -11,7 +11,7 @@ import re
 from jsonschema import validate
 
 from absearch import logger
-from absearch.counters import MemoryCohortCounters, RedisCohortCounters
+from absearch.counters import MemoryCohortCounters
 from absearch.exceptions import ReadError
 
 from distutils.version import LooseVersion
@@ -52,12 +52,8 @@ class SearchSettings(object):
         self.schema_md5 = self.config_md5 = None
         self._last_loaded = None
 
-        if counter == 'memory':
-            logger.info("Use memory backend for counters")
-            counters_backend = MemoryCohortCounters
-        else:
-            logger.info("Use Redis backend for counters")
-            counters_backend = RedisCohortCounters
+        logger.info("Use memory backend for counters")
+        counters_backend = MemoryCohortCounters
 
         if counter_options is None:
             counter_options = {}

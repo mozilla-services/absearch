@@ -8,7 +8,6 @@ install_requires = ['gevent',
                     'bottle',
                     'dockerflow',
                     'jsonschema',
-                    'redis',
                     'konfig',
                     'statsd',
                     'datadog',
@@ -36,6 +35,4 @@ setup(name='absearch',
       absearch-server = absearch.server:main
       absearch-upload = absearch.upload:main
       absearch-check = absearch.check:main
-      absearch-redis-dump = absearch.counters:dump
-      absearch-redis-load = absearch.counters:load
       """)
