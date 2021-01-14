@@ -1,10 +1,5 @@
-import gevent
-
 from absearch import __version__
-from absearch.tests.support import (runServers, stopServers, get_app, capture,
-                                    test_config)
-from absearch.server import main
-
+from absearch.tests.support import runServers, stopServers, get_app
 
 def setUp():
     runServers()
@@ -41,14 +36,3 @@ def test_all_locales():
             path = path.format(locale, territory)
             res = app.get(path)
             assert res.json["settings"]["searchDefault"] in search_providers
-
-
-def test_main():
-    with capture():
-        greenlet = gevent.spawn(main, [test_config])
-        gevent.sleep(0.1)
-
-    assert greenlet.started
-    greenlet.kill()
-    gevent.wait([greenlet])
-    assert not greenlet.started

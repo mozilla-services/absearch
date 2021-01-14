@@ -7,12 +7,7 @@ RUN groupadd --gid 10001 app \
 
 COPY . /app
 
-# note: install gevent as a binary package to prevent the need
-# for gcc and compiling from src (container bloat).
-# setup.py should require the same version of gcc that
-# comes as a package (1.1.2)
 RUN apt-get update && \
-    apt-get install -y python-gevent && \
     pip install -U pip && \
     pip install -r requirements.txt && \
     pip install . && \
