@@ -33,7 +33,7 @@ def accumulate(iterable):
 
 _O = ascii_uppercase + ascii_lowercase + digits + '.-'
 _S = ascii_lowercase + ascii_lowercase + digits + '.-'
-_TAB = _O.maketrans(_O, _S)
+_TAB = string.maketrans(_O, _S)
 _REMOVE_PRERELEASE_SUFFIX = re.compile(r"(?:\-cdntest|\-localtest)$")
 
 
