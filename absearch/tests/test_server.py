@@ -1,13 +1,10 @@
 import os
 from collections import defaultdict
-import shutil
 import json
-import time
 
 from absearch import __version__
 from absearch.tests.support import (runServers, stopServers, get_app, capture,
-                                    flush_redis, populate_S3, dump_counters)
-from absearch.server import close
+                                    flush_redis, dump_counters)
 
 
 def setUp():
@@ -358,14 +355,6 @@ def test_reload():
     finally:
         # restore old config
         os.rename(config_file + '.saved', config_file)
-
-
-def test_close():
-    try:
-        close()
-        assert False, "We should exit on a close() call"
-    except SystemExit:
-        pass
 
 
 def test_invalid_url():

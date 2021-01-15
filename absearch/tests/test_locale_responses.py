@@ -1,6 +1,7 @@
 from absearch import __version__
 from absearch.tests.support import runServers, stopServers, get_app
 
+
 def setUp():
     runServers()
 
