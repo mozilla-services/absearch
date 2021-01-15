@@ -3,7 +3,7 @@ from collections import defaultdict
 import json
 
 from absearch import __version__
-from absearch.tests.support import (runServers, stopServers, get_app, capture,
+from absearch.tests.support import (runServers, stopServers, get_app,
                                     flush_redis, dump_counters)
 
 
