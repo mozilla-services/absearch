@@ -1,7 +1,7 @@
 import time
 from collections import defaultdict
 from contextlib import contextmanager
-from absearch.tests.support import runServers, stopServers, get_app
+from absearch.tests.support import get_app
 from absearch import server
 
 
@@ -23,11 +23,9 @@ class FakeStatsd(object):
 def setUp():
     server._old_Statsd = server._Statsd
     server._Statsd = FakeStatsd
-    runServers()
 
 
 def tearDown():
-    stopServers()
     server._Statsd = server._old_Statsd
 
 

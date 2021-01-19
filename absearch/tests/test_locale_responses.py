@@ -1,13 +1,5 @@
 from absearch import __version__
-from absearch.tests.support import runServers, stopServers, get_app
-
-
-def setUp():
-    runServers()
-
-
-def tearDown():
-    stopServers()
+from absearch.tests.support import get_app
 
 
 def test_info():
