@@ -30,7 +30,7 @@ def test_get_set_s3_file():
 
     with open(datafile) as f:
         old_data = f.read()
-        old_hash = hashlib.md5(old_data).hexdigest()
+        old_hash = hashlib.md5(old_data.encode("utf8")).hexdigest()
 
     # reading the S3 bucket (that was filled with datafile)
     res, hash = get_s3_file(datafile, config, statsd=stats)

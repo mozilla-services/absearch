@@ -116,12 +116,18 @@ def initialize_app(config):
         def config_reader():
             with open(os.path.join(datadir, configfile)) as f:
                 data = f.read()
-                return json.loads(data), hashlib.md5(data).hexdigest()
+                return (
+                    json.loads(data),
+                    hashlib.md5(data.encode("utf8")).hexdigest(),
+                )
 
         def schema_reader():
             with open(os.path.join(datadir, schemafile)) as f:
                 data = f.read()
-                return json.loads(data), hashlib.md5(data).hexdigest()
+                return (
+                    json.loads(data),
+                    hashlib.md5(data.encode("utf8")).hexdigest(),
+                )
 
     # counter configuration
     counter = app._config['absearch']['counter']

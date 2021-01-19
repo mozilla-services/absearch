@@ -28,12 +28,18 @@ def main(args=sys.argv[1:]):
     def read_config():
         with open(configpath) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     def read_schema():
         with open(schemapath) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     try:
         SearchSettings(read_config, read_schema)
