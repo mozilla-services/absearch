@@ -10,7 +10,6 @@ elif [ $1 == "nosetest" ]; then
         exit 1
     fi
 
-    apt-get install -y redis-server
     pip install -r dev-requirements.txt
     nosetests --nocapture absearch
 elif [ $1 == "flake8" ]; then

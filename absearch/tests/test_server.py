@@ -3,8 +3,7 @@ from collections import defaultdict
 import json
 
 from absearch import __version__
-from absearch.tests.support import (runServers, stopServers, get_app,
-                                    flush_redis, dump_counters)
+from absearch.tests.support import (runServers, stopServers, get_app)
 
 
 def setUp():
@@ -20,6 +19,7 @@ def test_lbheartbeat():
 
     # test the APIs
     resp = app.get('/__lbheartbeat__')
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert resp.status_code == 200
 
 
@@ -27,7 +27,9 @@ def test_info():
     app = get_app()
 
     # test the APIs
-    info = app.get('/__info__').json
+    resp = app.get('/__info__')
+    info = resp.json
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert info['version'] == __version__
 
 
@@ -47,7 +49,9 @@ def test_version():
 
     json.dump({'project': 'absearch'}, open('./version.json', 'w'))
 
-    version = app.get('/__version__').json
+    resp = app.get('/__version__')
+    version = resp.json
+    assert resp.headers["Cache-Control"] == "max-age=300"
     assert version['project'] == 'absearch'
 
 
@@ -61,6 +65,7 @@ def test_set_cohort():
     assert 'cohort' not in res.json
     assert res.json['settings'] == {'searchDefault': 'Yahoo'}
     assert res.json['interval'] == 31536000
+    assert res.headers["Cache-Control"] == "max-age=300"
 
 
 def test_default_interval():
@@ -72,6 +77,7 @@ def test_default_interval():
     res = app.get(path)
     assert 'cohort' not in res.json
     assert res.json['interval'] == 31536000
+    assert res.headers["Cache-Control"] == "max-age=300"
 
 
 def test_just_3_keys():
@@ -177,14 +183,9 @@ def test_unexistant_locale():
 
 
 def test_max_cohort():
-    flush_redis()
     # check that we can have at the most 3 users in the 'foo' cohort
     # that cohort is at 100% sampleRate for the fr territory under fr-FR
     app = get_app()
-
-    # the counters should all be empty
-    counters = list(dump_counters())
-    assert len(counters) == 0
 
     # get the cohort 3 times
     path = '/1/firefox/39/beta/fr-FR/fr/default/default'
@@ -198,14 +199,8 @@ def test_max_cohort():
     # when default we don't have the cohort key in the response
     assert 'cohort' not in res.json, res.json
 
-    # the counters should be 1 for the default, 3 for foo
-    counters = list(dump_counters())
-    counters.sort()
-    assert counters == ['fr-fr:fr:default:1', 'fr-fr:fr:fooBaz:3']
-
 
 def test_product_filter():
-    flush_redis()
     # check that we are filtering by product
     app = get_app()
 
@@ -221,7 +216,6 @@ def test_product_filter():
 
 
 def test_channel_filter():
-    flush_redis()
     # check that we are filtering by product
     app = get_app()
 
@@ -247,7 +241,6 @@ def test_channel_filter():
 
 
 def test_version_filter():
-    flush_redis()
     # check that we are filtering by product
     app = get_app()
 
@@ -284,13 +277,6 @@ def test_sample_rate():
     assert 0 < counts['two'] <= 20, counts
     assert 0 < counts['three'] <= 20, counts
     assert 955 <= counts['default'] <= 985, counts
-
-    # verifying redis counters
-    counters = list(dump_counters())
-    assert 'de-de:de:one:%d' % counts['one'] in counters
-    assert 'de-de:de:two:%d' % counts['two'] in counters
-    assert 'de-de:de:three:%d' % counts['three'] in counters
-    assert 'de-de:de:default:%d' % counts['default'] in counters
 
 
 def test_hb():

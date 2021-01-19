@@ -21,6 +21,7 @@ from absearch import logger
 
 TPL_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 TEMPLATE_PATH.insert(0, TPL_DIR)
+CACHE_CONTROL_MAX_AGE = 300
 app = Bottle()
 summary_logger = logging.getLogger("request.summary")
 
@@ -60,6 +61,8 @@ def before_request():
 def after_request():
     isotimestamp = datetime.datetime.now().isoformat()
     t_usec = (datetime.datetime.now() - request._received_at).microseconds
+    cache_control = "max-age={max_age}".format(max_age=CACHE_CONTROL_MAX_AGE)
+    response.set_header("Cache-Control", cache_control)
     context = dict(
         agent=request.headers.get("User-Agent"),
         path=request.path,
@@ -122,10 +125,7 @@ def initialize_app(config):
 
     # counter configuration
     counter = app._config['absearch']['counter']
-    if counter == 'redis':
-        counter_options = dict(app._config['redis'])
-    else:
-        counter_options = {}
+    counter_options = {}
     counter_options['statsd'] = app._statsd
 
     max_age = app._config['absearch']['max_age']

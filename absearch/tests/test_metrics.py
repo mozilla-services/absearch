@@ -55,9 +55,6 @@ def test_metrics():
     # we read two files in AWS
     assert len(stats.timers['get_s3_file']), 2
 
-    # we incremented on redis the counter for the default cohort
-    assert len(stats.timers['redis.incr']) == 1
-
 
 def test_enrolled():
     app = get_app()
