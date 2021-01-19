@@ -174,11 +174,11 @@ def test_unexistant_territory():
 
 def test_unexistant_locale():
     app = get_app()
-    # check that an unexistant locale sends back and interval
+    # check that an unexistant locale sends back an interval
     path = '/1/firefox/39/beta/hh-FR/uz/default/default'
 
     res = app.get(path).json
-    assert res.keys() == ['interval']
+    assert list(res.keys()) == ['interval']
 
 
 def test_max_cohort():
@@ -289,7 +289,7 @@ def test_hb():
 def test_root():
     app = get_app()
     res = app.get('/')
-    assert res.json.keys() == ['description']
+    assert list(res.json.keys()) == ['description']
 
 
 def test_excluded():
@@ -299,7 +299,7 @@ def test_excluded():
     # sending back just a 200 + interval
     path = '/1/firefox/39/beta/de-DE/de/ayeah/default'
     res = app.get(path).json
-    assert res.keys() == ['interval']
+    assert list(res.keys()) == ['interval']
 
 
 def test_invalid_url():
