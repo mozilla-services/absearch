@@ -3,9 +3,7 @@ import datetime
 from functools import partial
 import os
 import json
-import signal
 import logging.config
-import gevent
 import hashlib
 
 from konfig import Config
@@ -26,22 +24,6 @@ TEMPLATE_PATH.insert(0, TPL_DIR)
 CACHE_CONTROL_MAX_AGE = 300
 app = Bottle()
 summary_logger = logging.getLogger("request.summary")
-
-
-def close():
-    # do some cleanup here
-    sys.exit(0)
-
-
-def reload():
-    print('Reloading configuration')
-    initialize_app(app._config_file)
-    print('Done')
-
-
-gevent.signal(signal.SIGHUP, reload)
-gevent.signal(signal.SIGTERM, close)
-gevent.signal(signal.SIGINT, close)
 
 
 class _Statsd(object):

@@ -1,10 +1,8 @@
 from setuptools import setup, find_packages
 from absearch import __version__
 
-# gevent version should match docker container distributions
-# package version
-install_requires = ['gevent',
-                    'boto',
+
+install_requires = ['boto',
                     'bottle',
                     'dockerflow',
                     'jsonschema',

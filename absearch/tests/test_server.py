@@ -1,16 +1,9 @@
 import os
 from collections import defaultdict
-import shutil
 import json
-import time
-import sys
-
-import gevent
 
 from absearch import __version__
-from absearch.tests.support import (runServers, stopServers, get_app, capture,
-                                    test_config, populate_S3)
-from absearch.server import reload, main, close
+from absearch.tests.support import (runServers, stopServers, get_app)
 
 
 def setUp():
@@ -171,59 +164,6 @@ def test_pick_test_cohort_and_ask_again():
     assert res.json['cohort'] == 'fooBaz'
 
 
-def test_start_time():
-    app = get_app()
-    # bar34234 or default
-    # gets picked because foo23542 has not started yet (starts in 2051)
-    path = '/1/firefox/39/beta/fr-BE/BE/default/default'
-    res = app.get(path).json
-    assert res['settings']['searchDefault'] != 'Google2'
-
-    # also, any attempt to get foo23542 directly should
-    # fallback to the defaults because it's not active yet
-    res = app.get(path + '/foo23542').json
-    assert res['settings']['searchDefault'] != 'Google2'
-
-    # let's change the data
-    config = app.app._config
-    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
-    datafile = os.path.join(datadir, config['absearch']['config'])
-
-    # save a copy
-    shutil.copyfile(datafile, datafile + '.saved')
-    with open(datafile) as f:
-        data = json.loads(f.read())
-
-    # change the start time so it's activated now
-    filters = data['locales']['fr-BE']['BE']['tests']['foo23542']['filters']
-    filters['startTime'] = time.time() - 10
-
-    try:
-        # save the new data
-        with open(datafile, 'w') as f:
-            f.write(json.dumps(data))
-
-        with capture():
-            # reload S3
-            populate_S3()
-
-            # reload the app
-            reload()
-
-        # now it has to be foo23542
-        res = app.get(path).json
-        assert res['settings']['searchDefault'] == 'Google2', res
-    finally:
-        # back to original
-        os.rename(datafile + '.saved', datafile)
-        with capture():
-            # reload S3
-            populate_S3()
-
-            # reload the app
-            reload()
-
-
 def test_unexistant_territory():
     app = get_app()
     # check that an unexistant territory sends back the default
@@ -361,95 +301,6 @@ def test_excluded():
     path = '/1/firefox/39/beta/de-DE/de/ayeah/default'
     res = app.get(path).json
     assert res.keys() == ['interval']
-
-
-def test_reload():
-    # change some things in the config
-    app = get_app()
-    config_file = app.app._config_file
-    config = app.app._config
-
-    # save current config
-    with open(config_file + '.saved', 'w') as f:
-        config.write(f)
-
-    # change the configuration to alternatives
-    # so we actually test them
-    config['statsd']['prefix'] = 'meh'
-    config['sentry']['enabled'] = '1'
-    config['absearch']['backend'] = 'directory'
-    config['absearch']['counter'] = 'memory'
-    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
-    config.add_section('directory')
-    config['directory']['path'] = datadir
-
-    # save new config
-    with open(config_file, 'w') as f:
-        config.write(f)
-
-    try:
-        # make sure that reload grabs the config
-        with capture():
-            reload()
-
-        assert app.app._config['statsd']['prefix'] == 'meh'
-
-        # doing a call with sentry disabled
-        path = '/1/firefox/39/beta/hh-FR/uz/default/default'
-        res = app.get(path).json
-        assert res.keys() == ['interval']
-    finally:
-        # restore old config
-        os.rename(config_file + '.saved', config_file)
-
-
-def test_main():
-    with capture() as f:
-        greenlet = gevent.spawn(main, [test_config])
-        gevent.sleep(0.1)
-
-    assert greenlet.started, f
-    greenlet.kill()
-    gevent.wait([greenlet])
-    assert not greenlet.started
-
-
-def test_main_no_args():
-    with capture() as f:
-        greenlet = gevent.spawn(main, [])
-        gevent.sleep(0.1)
-
-    assert greenlet.started, f
-    greenlet.kill()
-    gevent.wait([greenlet])
-    assert not greenlet.started
-
-
-def test_main_sys_args():
-    old_argv = list(sys.argv)
-    config = os.path.join(os.path.dirname(__file__), '..', '..',
-                          'config', 'absearch.ini')
-    sys.argv = ['', config]
-
-    try:
-        with capture() as f:
-            greenlet = gevent.spawn(main)
-            gevent.sleep(0.1)
-
-        assert greenlet.started, f
-        greenlet.kill()
-        gevent.wait([greenlet])
-        assert not greenlet.started
-    finally:
-        sys.argv[:] = old_argv
-
-
-def test_close():
-    try:
-        close()
-        assert False, "We should exit on a close() call"
-    except SystemExit:
-        pass
 
 
 def test_invalid_url():
