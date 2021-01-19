@@ -6,7 +6,6 @@ install_requires = ['bottle',
                     'dockerflow',
                     'jsonschema',
                     'konfig',
-                    'statsd',
                     'raven']
 
 
