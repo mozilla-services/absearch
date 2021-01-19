@@ -8,7 +8,6 @@ install_requires = ['boto',
                     'jsonschema',
                     'konfig',
                     'statsd',
-                    'datadog',
                     'raven']
 
 

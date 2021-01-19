@@ -9,7 +9,6 @@ class FakeStatsd(object):
     def __init__(self, config):
         self.counters = defaultdict(int)
         self.timers = defaultdict(list)
-        self.datadog = True
 
     @contextmanager
     def timer(self, name):

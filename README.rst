@@ -37,16 +37,15 @@ The following metrics are produced by the app in statsd:
 +------------------------------+---------+------------------------------------------+
 | absearch.add_user_to_cohort  | timer   | on every GET w/ a new cohort set         |
 +------------------------------+---------+------------------------------------------+
-| absearch.enrolled            | counter | on every cohort enrollment (*)           |
+| absearch.enrolled            | counter | on every cohort enrollment               |
 +------------------------------+---------+------------------------------------------+
-| absearch.discarded           | counter | on every cohort discard (*) (**)         |
+| absearch.discarded           | counter | on every cohort discard (**)             |
 +------------------------------+---------+------------------------------------------+
-| absearch.refreshed           | counter | on every call to get cohort settings (*) |
+| absearch.refreshed           | counter | on every call to get cohort settings     |
 +------------------------------+---------+------------------------------------------+
 | absearch.get_cohort_settings | timer   | on every GET to get back cohort settings |
 +------------------------------+---------+------------------------------------------+
 
 
-(*) if you use Datadog, the tag will contain the cohort name, prefixed by the locale and territory.
-(**) unknown cohorts will increment this counter as well
+(*) unknown cohorts will increment this counter as well
 

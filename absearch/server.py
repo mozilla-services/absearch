@@ -10,7 +10,6 @@ from konfig import Config
 from bottle import (
     Bottle, HTTPError, TEMPLATE_PATH, request, response)
 from statsd import StatsClient
-from datadog import initialize, statsd
 from raven import Client as Sentry
 
 from absearch import __version__
@@ -28,30 +27,15 @@ summary_logger = logging.getLogger("request.summary")
 
 class _Statsd(object):
     def __init__(self, config):
-        if config.get('datadog', True):
-            initialize(statsd_host=config['host'],
-                       statsd_port=config['port'],
-                       prefix=config['prefix'])
-            self.datadog = True
-            self._statsd = statsd
-        else:
-            self.datadog = False
-            self._statsd = StatsClient(config['host'],
-                                       config['port'],
-                                       config['prefix'])
+        self._statsd = StatsClient(
+            config['host'], config['port'], config['prefix']
+        )
 
     def incr(self, metric, count=1, rate=1, **kw):
-        if self.datadog:
-            return self._statsd.increment(metric, value=count,
-                                          sample_rate=rate, **kw)
-        else:
-            return self._statsd.incr(metric, count=count, rate=rate)
+        return self._statsd.incr(metric, count=count, rate=rate)
 
     def timer(self, metric, rate=1, **kw):
-        if self.datadog:
-            return self._statsd.timed(metric, sample_rate=rate, **kw)
-        else:
-            return self._statsd.timer(metric, rate=rate)
+        return self._statsd.timer(metric, rate=rate)
 
 
 def before_request():

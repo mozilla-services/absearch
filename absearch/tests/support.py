@@ -26,8 +26,6 @@ def run_moto():
 
 _P = []
 test_config = os.path.join(os.path.dirname(__file__), 'absearch.ini')
-test_config_no_datadog = os.path.join(os.path.dirname(__file__),
-                                      'absearch-nodatadog.ini')
 
 
 def runServers():
@@ -64,13 +62,10 @@ def stopServers():
     _P[:] = []
 
 
-def get_app(datadog=False):
+def get_app():
     # create the web app
     server.app.debug = True
-    if datadog:
-        server.initialize_app(test_config)
-    else:
-        server.initialize_app(test_config_no_datadog)
+    server.initialize_app(test_config)
     server.app.catchall = False
     return TestApp(server.app)
 
