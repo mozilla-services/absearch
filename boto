@@ -1,9 +1,0 @@
-[Credentials]
-aws_access_key_id = boo
-aws_secret_access_key = bah
-
-[Boto]
-is_secure = False
-https_validate_certificates = False
-proxy_port = 5000
-proxy = 127.0.0.1

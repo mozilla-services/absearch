@@ -51,9 +51,6 @@ def test_metrics():
     # we called add_user_to_cohort once
     assert len(stats.timers['add_user_to_cohort']), 1
 
-    # we read two files in AWS
-    assert len(stats.timers['get_s3_file']), 2
-
 
 def test_enrolled():
     app = get_app()

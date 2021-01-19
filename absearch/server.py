@@ -1,6 +1,5 @@
 import sys
 import datetime
-from functools import partial
 import os
 import json
 import logging.config
@@ -14,7 +13,6 @@ from raven import Client as Sentry
 
 from absearch import __version__
 from absearch.settings import SearchSettings
-from absearch.aws import get_s3_file
 from absearch import logger
 
 
@@ -86,26 +84,19 @@ def initialize_app(config):
     configfile = app._config['absearch']['config']
     schemafile = app._config['absearch']['schema']
 
-    if app._config['absearch']['backend'] == 'aws':
-        logger.info("Read config and schema from AWS")
-        config_reader = partial(get_s3_file, configfile, app._config,
-                                app._statsd)
-        schema_reader = partial(get_s3_file, schemafile, app._config,
-                                app._statsd)
-    else:
-        # directory
-        datadir = app._config['directory']['path']
-        logger.info("Read config and schema from %r on disk" % datadir)
+    # directory
+    datadir = app._config['directory']['path']
+    logger.info("Read config and schema from %r on disk" % datadir)
 
-        def config_reader():
-            with open(os.path.join(datadir, configfile)) as f:
-                data = f.read()
-                return json.loads(data), hashlib.md5(data).hexdigest()
+    def config_reader():
+        with open(os.path.join(datadir, configfile)) as f:
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
-        def schema_reader():
-            with open(os.path.join(datadir, schemafile)) as f:
-                data = f.read()
-                return json.loads(data), hashlib.md5(data).hexdigest()
+    def schema_reader():
+        with open(os.path.join(datadir, schemafile)) as f:
+            data = f.read()
+            return json.loads(data), hashlib.md5(data).hexdigest()
 
     # counter configuration
     counter = app._config['absearch']['counter']
@@ -133,9 +124,6 @@ def lhb():
 
 @app.route('/__heartbeat__')
 def hb():
-    # doing a realistic code, but triggering a S3 call as well
-    configfile = app._config['absearch']['config']
-    get_s3_file(configfile, app._config, app._statsd, use_cache=False)
 
     res = app.settings.get('firefox', '39', 'default', 'en-US', 'US',
                            'default', 'default')

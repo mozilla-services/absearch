@@ -8,10 +8,8 @@ from contextlib import contextmanager
 import socket
 
 from webtest import TestApp
-from konfig import Config
 
 from absearch import server
-from absearch.aws import _get_connector, set_s3_file
 
 
 def run_moto():
@@ -33,21 +31,6 @@ def runServers():
     _P.append(run_moto())
 
     time.sleep(.1)
-    populate_S3()
-
-
-def populate_S3():
-    # populate the bucket in Moto
-    config = Config(test_config)
-    conn = _get_connector(config)
-    conn.create_bucket(config['aws']['bucketname'])
-
-    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
-
-    for file_ in (config['absearch']['config'],
-                  config['absearch']['schema']):
-        filename = os.path.join(datadir, file_)
-        set_s3_file(filename, config)
 
 
 def stopServers():
