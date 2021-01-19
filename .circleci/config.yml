@@ -23,8 +23,8 @@ jobs:
           name: Build deployment container image
           command: docker build -t app:build .
       - run:
-          name: Test Nose
-          command: docker run -it --user root app:build nosetest
+          name: Unit Tests
+          command: docker run -it --user root app:build unittests
       - run:
           name: Flake8
           command: docker run -it --user root app:build flake8

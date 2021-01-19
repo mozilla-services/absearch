@@ -1,5 +1,5 @@
 tox
 WebTest
-nose
-nose-cov
+pytest
+pytest-cov
 coverage
