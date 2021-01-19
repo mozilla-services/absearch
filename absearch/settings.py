@@ -3,7 +3,6 @@ from collections import defaultdict
 import random
 import operator
 import bisect
-import string
 from string import ascii_lowercase, ascii_uppercase, digits
 import copy
 import re
@@ -33,13 +32,13 @@ def accumulate(iterable):
 
 _O = ascii_uppercase + ascii_lowercase + digits + '.-'
 _S = ascii_lowercase + ascii_lowercase + digits + '.-'
-_TAB = string.maketrans(_O, _S)
+_TAB = str.maketrans(_O, _S)
 _REMOVE_PRERELEASE_SUFFIX = re.compile(r"(?:\-cdntest|\-localtest)$")
 
 
 def _lower(s):
     try:
-        return string.translate(s, _TAB)
+        return str.translate(s, _TAB)
     except Exception:
         return s.lower()
 

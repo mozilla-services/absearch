@@ -52,9 +52,9 @@ def test_check_enum_fails():
         shutil.copy(broken_conf, conf)
         with capture():
             main([])
-    except ValidationError as e:
+    except ValidationError as err:
         # that's what we want
-        pass
+        e = err
     finally:
         os.rename(conf + '.saved', conf)
 

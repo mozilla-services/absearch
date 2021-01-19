@@ -2,10 +2,10 @@ import os
 import subprocess
 import sys
 import signal
-import time
-from cStringIO import StringIO
-from contextlib import contextmanager
 import socket
+import time
+from io import StringIO
+from contextlib import contextmanager
 
 from webtest import TestApp
 from konfig import Config
