@@ -152,6 +152,11 @@ def handle_500_error(code):
     logger.exception('An error occured')
 
 
+@app.error(404)
+def handle_404_error(code):
+    response.content_type = 'application/json'
+
+
 @app.route(PATH)
 def add_user_to_cohort(**kw):
     try:
