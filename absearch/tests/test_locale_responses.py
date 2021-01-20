@@ -23,8 +23,8 @@ def test_all_locales():
     }
     app = get_app()
 
-    for locale, config in locale_configs.iteritems():
-        for territory, search_providers in config.iteritems():
+    for locale, config in locale_configs.items():
+        for territory, search_providers in config.items():
             path = "/1/firefox/39/beta/{0}/{1}/default/default"
             path = path.format(locale, territory)
             res = app.get(path)

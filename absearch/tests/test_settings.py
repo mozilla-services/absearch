@@ -28,12 +28,18 @@ def _test_max_age(testdir):
     def config_reader():
         with open(confpath) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     def schema_reader():
         with open(os.path.join(testdir, 'config.schema.json')) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     settings = SearchSettings(config_reader, schema_reader, max_age=0.1)
     assert settings._default_interval == 31536000
@@ -77,7 +83,10 @@ def test_no_schema_validator():
     def config_reader():
         with open(confpath) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     try:
         settings = SearchSettings(config_reader, schema_reader=None)
@@ -112,7 +121,10 @@ def test_immutable_locales():
     def config_reader():
         with open(confpath) as f:
             data = f.read()
-            return json.loads(data), hashlib.md5(data).hexdigest()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     try:
         settings = SearchSettings(config_reader, schema_reader=None)

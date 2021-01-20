@@ -1,6 +1,6 @@
 import os
 import sys
-from cStringIO import StringIO
+from io import StringIO
 from contextlib import contextmanager
 
 from webtest import TestApp
