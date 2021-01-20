@@ -2,7 +2,7 @@
 
 if [ $1 == "server" ]; then
     exec /usr/local/bin/absearch-server /app/config/absearch.ini
-elif [ $1 == "nosetest" ]; then
+elif [ $1 == "unittests" ]; then
     # install dependencies (if required)
 
     if [ $EUID != 0 ]; then
@@ -11,7 +11,7 @@ elif [ $1 == "nosetest" ]; then
     fi
 
     pip install -r dev-requirements.txt
-    nosetests --nocapture absearch
+    pytest --capture=no absearch/tests
 elif [ $1 == "flake8" ]; then
     pip install flake8
     flake8 absearch
