@@ -13,7 +13,10 @@ SERVER_URL = ENVS.get(SERVER, SERVER)
 COHORT_ENDPOINT = "/1/{product}/{ver}/{channel}/{locale}/{territory}/{dist}/{distver}"
 
 
-@pytest.fixture
+print(f"Test endpoints on {SERVER_URL}")
+
+
+@pytest.fixture(scope="session")
 def cli():
     return requests.Session()
 
