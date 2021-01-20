@@ -3,3 +3,4 @@ WebTest
 pytest
 pytest-cov
 coverage
+requests

@@ -2,7 +2,7 @@
 
 if [ $1 == "server" ]; then
     exec /usr/local/bin/absearch-server /app/config/absearch.ini
-elif [ $1 == "unittests" ]; then
+elif [ $1 == "tests" ]; then
     # install dependencies (if required)
 
     if [ $EUID != 0 ]; then

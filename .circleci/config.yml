@@ -23,11 +23,15 @@ jobs:
           name: Build deployment container image
           command: docker build -t app:build .
       - run:
-          name: Unit Tests
-          command: docker run -it --user root app:build unittests
-      - run:
           name: Flake8
           command: docker run -it --user root app:build flake8
+      - run:
+          name: Run
+          command: docker run -it --user root app:build server
+          background: true
+      - run:
+          name: Tests
+          command: docker run -it --user root app:build tests
 
       - run:
           name: Push to Dockerhub
