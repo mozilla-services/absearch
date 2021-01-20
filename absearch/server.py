@@ -1,6 +1,5 @@
 import sys
 import datetime
-from functools import partial
 import os
 import json
 import logging.config
@@ -9,13 +8,10 @@ import hashlib
 from konfig import Config
 from bottle import (
     Bottle, HTTPError, TEMPLATE_PATH, request, response)
-from statsd import StatsClient
-from datadog import initialize, statsd
 from raven import Client as Sentry
 
 from absearch import __version__
 from absearch.settings import SearchSettings
-from absearch.aws import get_s3_file
 from absearch import logger
 
 
@@ -24,34 +20,6 @@ TEMPLATE_PATH.insert(0, TPL_DIR)
 CACHE_CONTROL_MAX_AGE = 300
 app = Bottle()
 summary_logger = logging.getLogger("request.summary")
-
-
-class _Statsd(object):
-    def __init__(self, config):
-        if config.get('datadog', True):
-            initialize(statsd_host=config['host'],
-                       statsd_port=config['port'],
-                       prefix=config['prefix'])
-            self.datadog = True
-            self._statsd = statsd
-        else:
-            self.datadog = False
-            self._statsd = StatsClient(config['host'],
-                                       config['port'],
-                                       config['prefix'])
-
-    def incr(self, metric, count=1, rate=1, **kw):
-        if self.datadog:
-            return self._statsd.increment(metric, value=count,
-                                          sample_rate=rate, **kw)
-        else:
-            return self._statsd.incr(metric, count=count, rate=rate)
-
-    def timer(self, metric, rate=1, **kw):
-        if self.datadog:
-            return self._statsd.timed(metric, sample_rate=rate, **kw)
-        else:
-            return self._statsd.timer(metric, rate=rate)
 
 
 def before_request():
@@ -89,9 +57,6 @@ def initialize_app(config):
     app.add_hook('before_request', before_request)
     app.add_hook('after_request', after_request)
 
-    # statsd configuration
-    app._statsd = _Statsd(app._config['statsd'])
-
     # sentry configuration
     if app._config['sentry']['enabled']:
         app._sentry = Sentry(app._config['sentry']['dsn'])
@@ -102,37 +67,29 @@ def initialize_app(config):
     configfile = app._config['absearch']['config']
     schemafile = app._config['absearch']['schema']
 
-    if app._config['absearch']['backend'] == 'aws':
-        logger.info("Read config and schema from AWS")
-        config_reader = partial(get_s3_file, configfile, app._config,
-                                app._statsd)
-        schema_reader = partial(get_s3_file, schemafile, app._config,
-                                app._statsd)
-    else:
-        # directory
-        datadir = app._config['directory']['path']
-        logger.info("Read config and schema from %r on disk" % datadir)
+    # directory
+    datadir = app._config['directory']['path']
+    logger.info("Read config and schema from %r on disk" % datadir)
 
-        def config_reader():
-            with open(os.path.join(datadir, configfile)) as f:
-                data = f.read()
-                return (
-                    json.loads(data),
-                    hashlib.md5(data.encode("utf8")).hexdigest(),
-                )
+    def config_reader():
+        with open(os.path.join(datadir, configfile)) as f:
+            data = f.read()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
-        def schema_reader():
-            with open(os.path.join(datadir, schemafile)) as f:
-                data = f.read()
-                return (
-                    json.loads(data),
-                    hashlib.md5(data.encode("utf8")).hexdigest(),
-                )
+    def schema_reader():
+        with open(os.path.join(datadir, schemafile)) as f:
+            data = f.read()
+            return (
+                json.loads(data),
+                hashlib.md5(data.encode("utf8")).hexdigest(),
+            )
 
     # counter configuration
     counter = app._config['absearch']['counter']
     counter_options = {}
-    counter_options['statsd'] = app._statsd
 
     max_age = app._config['absearch']['max_age']
     app.settings = SearchSettings(config_reader, schema_reader, counter,
@@ -155,9 +112,6 @@ def lhb():
 
 @app.route('/__heartbeat__')
 def hb():
-    # doing a realistic code, but triggering a S3 call as well
-    configfile = app._config['absearch']['config']
-    get_s3_file(configfile, app._config, app._statsd, use_cache=False)
 
     res = app.settings.get('firefox', '39', 'default', 'en-US', 'US',
                            'default', 'default')
@@ -200,48 +154,37 @@ def handle_500_error(code):
 
 @app.route(PATH)
 def add_user_to_cohort(**kw):
+    try:
+        res = app.settings.get(**kw)
+    except ValueError:
+        raise HTTPError(status=404)
 
-    with app._statsd.timer('add_user_to_cohort'):
-        try:
-            res = app.settings.get(**kw)
-        except ValueError:
-            raise HTTPError(status=404)
-
-        cohort = res.get('cohort', 'default')
-        if cohort != 'default':
-            locale = kw['locale']
-            territory = kw['territory']
-            cohort = '.'.join([locale, territory, cohort])
-            app._statsd.incr('enrolled', tags=[cohort])
-        return res
+    cohort = res.get('cohort', 'default')
+    if cohort != 'default':
+        locale = kw['locale']
+        territory = kw['territory']
+        cohort = '.'.join([locale, territory, cohort])
+    return res
 
 
 @app.route('%s/<cohort>' % PATH)
 def get_cohort_settings(**kw):
-    with app._statsd.timer('get_cohort_settings'):
-        try:
-            asked_cohort = kw['cohort']
-            res = app.settings.get(**kw)
-            if asked_cohort == 'default':
-                return res
-
-            cohort = res.get('cohort', 'default')
-            locale = kw['locale']
-            territory = kw['territory']
-            asked_cohort = '.'.join([locale, territory, asked_cohort])
-            cohort = '.'.join([locale, territory, cohort])
-
-            if asked_cohort != cohort:
-                # we're getting discarded
-                app._statsd.incr('discarded', tags=[asked_cohort])
-            else:
-                # we're getting back the cohort settings
-                app._statsd.incr('refreshed', tags=[asked_cohort])
-
+    try:
+        asked_cohort = kw['cohort']
+        res = app.settings.get(**kw)
+        if asked_cohort == 'default':
             return res
 
-        except ValueError:
-            raise HTTPError(status=404)
+        cohort = res.get('cohort', 'default')
+        locale = kw['locale']
+        territory = kw['territory']
+        asked_cohort = '.'.join([locale, territory, asked_cohort])
+        cohort = '.'.join([locale, territory, cohort])
+
+        return res
+
+    except ValueError:
+        raise HTTPError(status=404)
 
 
 def main(args=None):
