@@ -1,7 +1,7 @@
 import time
 from collections import defaultdict
 from contextlib import contextmanager
-from absearch.tests.support import runServers, stopServers, get_app
+from absearch.tests.support import get_app
 from absearch import server
 
 
@@ -23,11 +23,9 @@ class FakeStatsd(object):
 def setUp():
     server._old_Statsd = server._Statsd
     server._Statsd = FakeStatsd
-    runServers()
 
 
 def tearDown():
-    stopServers()
     server._Statsd = server._old_Statsd
 
 
@@ -50,9 +48,6 @@ def test_metrics():
 
     # we called add_user_to_cohort once
     assert len(stats.timers['add_user_to_cohort']), 1
-
-    # we read two files in AWS
-    assert len(stats.timers['get_s3_file']), 2
 
 
 def test_enrolled():

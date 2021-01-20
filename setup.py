@@ -2,8 +2,7 @@ from setuptools import setup, find_packages
 from absearch import __version__
 
 
-install_requires = ['boto',
-                    'bottle',
+install_requires = ['bottle',
                     'dockerflow',
                     'jsonschema',
                     'konfig',
@@ -30,6 +29,5 @@ setup(name='absearch',
       entry_points="""
       [console_scripts]
       absearch-server = absearch.server:main
-      absearch-upload = absearch.upload:main
       absearch-check = absearch.check:main
       """)
