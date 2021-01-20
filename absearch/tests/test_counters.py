@@ -1,13 +1,4 @@
-from absearch.tests.support import (runServers, stopServers)
 from absearch.counters import MemoryCohortCounters
-
-
-def setUp():
-    runServers()
-
-
-def tearDown():
-    stopServers()
 
 
 def test_memory():

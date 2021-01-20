@@ -2,16 +2,8 @@ import os
 import shutil
 
 from jsonschema.exceptions import ValidationError
-from absearch.tests.support import runServers, stopServers, capture
+from absearch.tests.support import capture
 from absearch.check import main
-
-
-def setUp():
-    runServers()
-
-
-def tearDown():
-    stopServers()
 
 
 def test_check():
