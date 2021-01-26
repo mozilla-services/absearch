@@ -13,8 +13,7 @@
           "settings": {
             "searchDefault":   "Yahoo",
             "optionB": ["foobAz", "Baz"]
-          },
-          "interval": 31536000
+          }
         }
       },
       "default": {
@@ -28,8 +27,7 @@
         "default": {
           "settings": {
             "searchDefault":   "Google"
-          },
-          "interval": 31536000
+          }
         },
         "tests": {
           "fooBaz": {
@@ -58,8 +56,7 @@
         "default": {
           "settings": {
             "searchDefault":   "Google"
-          },
-          "interval": 31536000
+          }
         },
         "tests": {
           "one": {
@@ -113,8 +110,7 @@
               "sampleRate": 100,
               "maxSize": 10000,
               "startTime": 1567824567
-            },
-            "interval": 2592000
+            }
           },
           "bar34234": {
             "settings": {
@@ -123,8 +119,7 @@
             "filters": {
               "sampleRate": 1,
               "maxSize": 10000
-            },
-            "interval": 2592000
+            }
           }
         }
       },
@@ -166,8 +161,7 @@
               "sampleRate": 1,
               "maxSize": 10000,
               "startTime": 1434362310
-            },
-            "interval": 2592000
+            }
           },
           "bar34234": {
             "settings": {
@@ -176,8 +170,7 @@
             "filters": {
               "sampleRate": 1,
               "maxSize": 10000
-            },
-            "interval": 2592000
+            }
           }
         }
       },

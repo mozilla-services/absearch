@@ -15,7 +15,8 @@ from absearch.exceptions import ReadError
 
 from distutils.version import LooseVersion
 
-DEFAULT_INTERVAL = 3600 * 24
+# 3600 seconds (1 hour) * 24 hours * 3 days
+DEFAULT_INTERVAL = 3600 * 24 * 3
 
 
 def accumulate(iterable):

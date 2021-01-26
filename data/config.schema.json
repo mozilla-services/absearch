@@ -71,7 +71,6 @@
                 }
               }
             },
-            "interval": { "type": "integer", "minimum": 3600 },
             "filters": {
               "type": "object",
               "required" : ["sampleRate"],
