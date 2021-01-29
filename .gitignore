@@ -11,3 +11,4 @@ include
 bin
 .Python
 *.swp
+data/

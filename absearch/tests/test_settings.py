@@ -10,8 +10,7 @@ from absearch.exceptions import ReadError
 
 
 def test_max_age():
-    datadir = os.path.join(os.path.dirname(__file__),
-                           '..', '..', 'example-data')
+    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
     testdir = tempfile.mkdtemp()
 
     for file_ in ('config.json', 'config.schema.json'):
@@ -74,8 +73,7 @@ def test_accumulate():
 
 
 def test_no_schema_validator():
-    datadir = os.path.join(os.path.dirname(__file__),
-                           '..', '..', 'example-data')
+    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
     testdir = tempfile.mkdtemp()
     confpath = os.path.join(testdir, 'config.json')
 
@@ -113,8 +111,7 @@ def test_loaded_broken():
 
 
 def test_immutable_locales():
-    datadir = os.path.join(os.path.dirname(__file__),
-                           '..', '..', 'example-data')
+    datadir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
     testdir = tempfile.mkdtemp()
     confpath = os.path.join(testdir, 'config.json')
 

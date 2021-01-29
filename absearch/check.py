@@ -7,7 +7,7 @@ import hashlib
 from absearch.settings import SearchSettings
 
 
-DEFAULT_DATADIR = os.path.join(os.path.dirname(__file__), '..', 'example-data')
+DEFAULT_DATADIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 
 def main(args=sys.argv[1:]):

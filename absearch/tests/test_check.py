@@ -18,7 +18,7 @@ def test_check():
 
 
 def test_check_fails():
-    conf = os.path.join(os.path.dirname(__file__), '..', '..', 'example-data',
+    conf = os.path.join(os.path.dirname(__file__), '..', '..', 'data',
                         'config.json')
     os.rename(conf, conf + '.saved')
     try:
@@ -35,7 +35,7 @@ def test_check_fails():
 
 
 def test_check_enum_fails():
-    conf = os.path.join(os.path.dirname(__file__), '..', '..', 'example-data',
+    conf = os.path.join(os.path.dirname(__file__), '..', '..', 'data',
                         'config.json')
     os.rename(conf, conf + '.saved')
     broken_conf = os.path.join(os.path.dirname(__file__), 'broken-conf.json')

@@ -27,6 +27,9 @@ virtualenv: $(PYTHON)
 $(PYTHON):
 	$(VIRTUALENV) $(VENV)
 
+set-data:
+	if [ ! -d "data" ]; then mkdir data; cp -a -v example-data/. data; fi
+
 tests:	install-dev
 	rm -f .coverage;$(VENV)/bin/tox
 
