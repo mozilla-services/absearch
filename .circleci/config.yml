@@ -19,9 +19,6 @@ jobs:
       - store_artifacts:
           path: version.json
       - run:
-          name: Move example data to data dir
-          command: if [ ! -d "data" ]; then mkdir data; cp -a -v example-data/. data; fi
-      - run:
           name: Build deployment container image
           command: docker build -t app:build .
       - run:
