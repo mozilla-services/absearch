@@ -27,7 +27,10 @@ virtualenv: $(PYTHON)
 $(PYTHON):
 	$(VIRTUALENV) $(VENV)
 
-tests:	install-dev
+data:
+	cp -R example-data/ data/
+
+tests:	install-dev data
 	rm -f .coverage;$(VENV)/bin/tox
 
 clean:
