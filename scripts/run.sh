@@ -10,6 +10,8 @@ elif [ $1 == "tests" ]; then
         exit 1
     fi
 
+    cp -R example-data/ data/
+
     pip install -r dev-requirements.txt
     pytest --capture=no absearch/tests
 elif [ $1 == "flake8" ]; then

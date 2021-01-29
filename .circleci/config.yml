@@ -18,7 +18,6 @@ jobs:
             "$CIRCLE_BUILD_URL" | tee version.json
       - store_artifacts:
           path: version.json
-
       - run:
           name: Build deployment container image
           command: docker build -t app:build .
