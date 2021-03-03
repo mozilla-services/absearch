@@ -18,8 +18,22 @@ from absearch import logger
 TPL_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 TEMPLATE_PATH.insert(0, TPL_DIR)
 CACHE_CONTROL_MAX_AGE = 300
+X_FRAME_OPTIONS = "DENY"
+X_CONTENT_TYPE_OPTIONS = "nosniff"
+STRICT_TRANSPORT_SECURITY = "max-age=15768000"
+CSP = "default-src 'none'; frame-ancestors 'none'"
+
 app = Bottle()
 summary_logger = logging.getLogger("request.summary")
+
+
+def set_headers():
+    cache_control = "max-age={max_age}".format(max_age=CACHE_CONTROL_MAX_AGE)
+    response.set_header("Cache-Control", cache_control)
+    response.set_header("X-Frame-Options", X_FRAME_OPTIONS)
+    response.set_header("X-Content-Type-Options", X_FRAME_OPTIONS)
+    response.set_header("Strict-Transport-Security", STRICT_TRANSPORT_SECURITY)
+    response.set_header("Content-Security-Policy", CSP)
 
 
 def before_request():
@@ -29,8 +43,8 @@ def before_request():
 def after_request():
     isotimestamp = datetime.datetime.now().isoformat()
     t_usec = (datetime.datetime.now() - request._received_at).microseconds
-    cache_control = "max-age={max_age}".format(max_age=CACHE_CONTROL_MAX_AGE)
-    response.set_header("Cache-Control", cache_control)
+    set_headers()
+
     context = dict(
         agent=request.headers.get("User-Agent"),
         path=request.path,
@@ -154,6 +168,7 @@ def handle_500_error(code):
 
 @app.error(404)
 def handle_404_error(code):
+    set_headers()
     response.content_type = 'application/json'
 
 
