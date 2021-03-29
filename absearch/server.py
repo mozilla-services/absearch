@@ -30,9 +30,9 @@ summary_logger = logging.getLogger("request.summary")
 def set_headers():
     cache_control = "max-age={max_age}".format(max_age=CACHE_CONTROL_MAX_AGE)
     response.set_header("Cache-Control", cache_control)
+    response.set_header("Pragma", cache_control)
     response.set_header("X-Frame-Options", X_FRAME_OPTIONS)
-    response.set_header("X-Content-Type-Options", X_FRAME_OPTIONS)
-    response.set_header("Strict-Transport-Security", STRICT_TRANSPORT_SECURITY)
+    response.set_header("X-Content-Type-Options", X_CONTENT_TYPE_OPTIONS)
     response.set_header("Content-Security-Policy", CSP)
 
 
